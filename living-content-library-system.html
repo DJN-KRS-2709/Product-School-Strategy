@@ -6,748 +6,730 @@
 <title>Product School — Living Content Library System</title>
 <style>
   :root {
-    --bg: #0a0e17;
-    --surface: #111827;
-    --surface-2: #1a2234;
-    --border: #1e293b;
-    --border-active: #3b82f6;
+    --bg: #06080f;
+    --surface: rgba(15, 23, 42, 0.85);
+    --surface-solid: #0f172a;
+    --border: rgba(51, 65, 85, 0.5);
     --text: #e2e8f0;
     --text-muted: #94a3b8;
-    --text-dim: #64748b;
-    --accent-blue: #3b82f6;
-    --accent-cyan: #06b6d4;
-    --accent-emerald: #10b981;
-    --accent-amber: #f59e0b;
-    --accent-rose: #f43f5e;
-    --accent-violet: #8b5cf6;
-    --accent-orange: #f97316;
-    --accent-pink: #ec4899;
-    --glow-blue: rgba(59, 130, 246, 0.15);
+    --text-dim: #475569;
+    --cyan: #22d3ee;
+    --blue: #3b82f6;
+    --emerald: #34d399;
+    --amber: #fbbf24;
+    --violet: #a78bfa;
+    --rose: #fb7185;
+    --orange: #fb923c;
+    --pink: #f472b6;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     background: var(--bg);
     color: var(--text);
     overflow-x: hidden;
-    min-height: 100vh;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
   }
 
-  .header {
+  header {
     text-align: center;
-    padding: 48px 24px 16px;
+    padding: 28px 24px 12px;
+    flex-shrink: 0;
   }
 
-  .header h1 {
-    font-size: 28px;
+  header h1 {
+    font-size: 22px;
     font-weight: 700;
-    letter-spacing: -0.5px;
-    background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+    letter-spacing: -0.3px;
+    color: var(--text);
+  }
+
+  header h1 span {
+    background: linear-gradient(135deg, var(--cyan), var(--blue));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin-bottom: 8px;
   }
 
-  .header .subtitle {
-    font-size: 14px;
+  header p {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  .canvas-wrap {
+    flex: 1;
+    position: relative;
+    min-height: 0;
+  }
+
+  canvas#flowCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Detail panel */
+  .detail-panel {
+    position: fixed;
+    right: -400px;
+    top: 0;
+    width: 380px;
+    height: 100vh;
+    background: var(--surface-solid);
+    border-left: 1px solid var(--border);
+    z-index: 200;
+    transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 32px 24px;
+    overflow-y: auto;
+  }
+
+  .detail-panel.open { right: 0; }
+
+  .detail-panel .close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: 1px solid var(--border);
     color: var(--text-muted);
-    max-width: 600px;
-    margin: 0 auto;
-    line-height: 1.5;
-  }
-
-  .confidence-line {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0;
-    margin: 24px auto 8px;
-    max-width: 600px;
-    padding: 0 24px;
+    transition: all 0.2s;
   }
 
-  .cl-phase {
-    flex: 1;
-    text-align: center;
-    padding: 10px 8px;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    position: relative;
+  .detail-panel .close-btn:hover {
+    border-color: var(--text-muted);
+    color: var(--text);
   }
 
-  .cl-phase:first-child {
-    border-radius: 8px 0 0 8px;
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(245, 158, 11, 0.15));
-    border: 1px solid rgba(245, 158, 11, 0.3);
-    color: var(--accent-amber);
-  }
-
-  .cl-phase:nth-child(2) {
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(6, 182, 212, 0.1));
-    border-top: 1px solid rgba(6, 182, 212, 0.3);
-    border-bottom: 1px solid rgba(6, 182, 212, 0.3);
-    color: var(--accent-cyan);
-  }
-
-  .cl-phase:last-child {
-    border-radius: 0 8px 8px 0;
-    background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(16, 185, 129, 0.15));
-    border: 1px solid rgba(16, 185, 129, 0.3);
-    color: var(--accent-emerald);
-  }
-
-  .cl-label {
-    font-size: 9px;
-    color: var(--text-dim);
-    margin-top: 4px;
-    font-weight: 400;
-    text-transform: none;
-    letter-spacing: 0;
-  }
-
-  .system-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 24px;
-    display: grid;
-    grid-template-columns: 260px 1fr 260px;
-    grid-template-rows: auto auto;
-    gap: 0;
-    position: relative;
-  }
-
-  .col-header {
-    text-align: center;
-    padding: 12px 0 16px;
-    font-size: 11px;
+  .detail-panel .dp-category {
+    font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1.5px;
+    margin-bottom: 8px;
   }
 
-  .col-header.sources { color: var(--accent-cyan); grid-column: 1; }
-  .col-header.library { color: var(--accent-blue); grid-column: 2; }
-  .col-header.outputs { color: var(--accent-emerald); grid-column: 3; }
-
-  .sources-col {
-    grid-column: 1;
-    grid-row: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    z-index: 1;
-    padding-right: 16px;
-  }
-
-  .source-group-label, .output-group-label {
-    font-size: 10px;
+  .detail-panel .dp-title {
+    font-size: 20px;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text-dim);
-    padding: 8px 0 4px 12px;
+    margin-bottom: 12px;
+    line-height: 1.3;
   }
 
-  .source-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 14px;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    position: relative;
-    overflow: hidden;
+  .detail-panel .dp-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 20px;
   }
 
-  .source-card::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    border-radius: 10px 0 0 10px;
-  }
-
-  .source-card.internal::before { background: var(--accent-cyan); }
-  .source-card.external::before { background: var(--accent-violet); }
-
-  .source-card:hover {
-    border-color: var(--border-active);
-    transform: translateX(4px);
-    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1);
-  }
-
-  .source-card .name { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
-  .source-card .desc { font-size: 10px; color: var(--text-dim); line-height: 1.4; }
-
-  .source-card .badge {
-    display: inline-block;
-    font-size: 9px;
-    font-weight: 600;
-    padding: 2px 6px;
-    border-radius: 4px;
-    margin-top: 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .source-card.internal .badge { background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); }
-  .source-card.external .badge { background: rgba(139, 92, 246, 0.15); color: var(--accent-violet); }
-
-  .library-col {
-    grid-column: 2;
-    grid-row: 2;
-    z-index: 1;
-    padding: 0 24px;
+  .detail-panel .dp-meta {
     display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .library-core {
-    background: var(--surface);
-    border: 2px solid var(--accent-blue);
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 0 40px var(--glow-blue), inset 0 1px 0 rgba(255,255,255,0.05);
-  }
-
-  .library-core .title {
-    font-size: 16px;
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 16px;
-    color: var(--accent-blue);
-  }
-
-  .atom-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-
-  .atom-type {
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px;
-    text-align: center;
-    transition: all 0.25s ease;
-    cursor: pointer;
-  }
-
-  .atom-type:hover {
-    border-color: var(--border-active);
-    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.1);
-  }
-
-  .atom-type .icon { font-size: 24px; margin-bottom: 6px; }
-  .atom-type .label { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
-  .atom-type .examples { font-size: 10px; color: var(--text-dim); line-height: 1.4; }
-
-  .library-meta {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
-  }
-
-  .meta-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px;
-    text-align: center;
-  }
-
-  .meta-card .meta-label {
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: var(--text-dim);
-    margin-bottom: 4px;
-  }
-
-  .meta-card .meta-value { font-size: 18px; font-weight: 800; }
-  .meta-card .meta-sub { font-size: 9px; color: var(--text-dim); margin-top: 2px; }
-  .meta-card:nth-child(1) .meta-value { color: var(--accent-emerald); }
-  .meta-card:nth-child(2) .meta-value { color: var(--accent-amber); }
-  .meta-card:nth-child(3) .meta-value { color: var(--accent-rose); }
-
-  .governance {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px 16px;
-  }
-
-  .governance .gov-title {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: var(--accent-amber);
-    margin-bottom: 10px;
-    text-align: center;
-  }
-
-  .gov-pipeline {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
+    gap: 12px;
     flex-wrap: wrap;
   }
 
-  .gov-step {
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 6px 10px;
+  .detail-panel .dp-tag {
     font-size: 10px;
     font-weight: 600;
-    color: var(--text-muted);
-    white-space: nowrap;
-  }
-
-  .gov-arrow { color: var(--text-dim); font-size: 12px; }
-
-  .outputs-col {
-    grid-column: 3;
-    grid-row: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    z-index: 1;
-    padding-left: 16px;
-  }
-
-  .output-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 14px;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .output-card::after {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    border-radius: 0 10px 10px 0;
-  }
-
-  .output-card.courses::after { background: var(--accent-emerald); }
-  .output-card.enterprise::after { background: var(--accent-orange); }
-  .output-card.content::after { background: var(--accent-pink); }
-
-  .output-card:hover {
-    border-color: var(--border-active);
-    transform: translateX(-4px);
-    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1);
-  }
-
-  .output-card .name { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
-  .output-card .desc { font-size: 10px; color: var(--text-dim); line-height: 1.4; }
-
-  .output-card .badge {
-    display: inline-block;
-    font-size: 9px;
-    font-weight: 600;
-    padding: 2px 6px;
-    border-radius: 4px;
-    margin-top: 6px;
+    padding: 4px 10px;
+    border-radius: 6px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
 
-  .output-card.courses .badge { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); }
-  .output-card.enterprise .badge { background: rgba(249, 115, 22, 0.15); color: var(--accent-orange); }
-  .output-card.content .badge { background: rgba(236, 72, 153, 0.15); color: var(--accent-pink); }
-
-  .flow-strip {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 24px;
-    display: grid;
-    grid-template-columns: 260px 1fr 260px;
-  }
-
-  .flow-label-left, .flow-label-right {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 16px 0;
-  }
-
-  .flow-label-left { justify-content: flex-end; padding-right: 16px; }
-  .flow-label-right { padding-left: 16px; }
-
-  .flow-arrow-animated { display: flex; align-items: center; gap: 2px; }
-
-  .flow-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    animation: flowPulse 2s ease-in-out infinite;
-  }
-
-  .flow-dot.in { background: var(--accent-cyan); }
-  .flow-dot.out { background: var(--accent-emerald); }
-  .flow-dot:nth-child(1) { animation-delay: 0s; }
-  .flow-dot:nth-child(2) { animation-delay: 0.3s; }
-  .flow-dot:nth-child(3) { animation-delay: 0.6s; }
-
-  @keyframes flowPulse {
-    0%, 100% { opacity: 0.2; transform: scale(0.8); }
-    50% { opacity: 1; transform: scale(1.2); }
-  }
-
-  .flow-text {
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text-dim);
-  }
-
-  .flow-center { display: flex; align-items: center; justify-content: center; }
-
-  .feedback-loop {
-    max-width: 1200px;
-    margin: 24px auto 0;
-    padding: 0 24px;
-  }
-
-  .loop-bar {
-    background: var(--surface);
-    border: 1px dashed var(--border);
-    border-radius: 12px;
-    padding: 16px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 24px;
-  }
-
-  .loop-icon {
-    font-size: 20px;
-    animation: spin 4s linear infinite;
-  }
-
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-
-  .loop-text {
-    font-size: 12px;
-    color: var(--text-muted);
-    text-align: center;
-    line-height: 1.5;
-  }
-
-  .loop-text strong { color: var(--accent-amber); }
-
-  .footer {
-    text-align: center;
-    padding: 32px 24px 48px;
-    font-size: 11px;
-    color: var(--text-dim);
-  }
-
-  .footer .tagline {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-muted);
-    margin-bottom: 8px;
-    font-style: italic;
-  }
-
-  .tooltip {
-    display: none;
+  /* Tooltip */
+  .hover-tip {
     position: fixed;
-    background: var(--surface-2);
-    border: 1px solid var(--border-active);
-    border-radius: 10px;
-    padding: 14px 16px;
-    max-width: 280px;
-    z-index: 100;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(59, 130, 246, 0.4);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
     pointer-events: none;
+    z-index: 150;
+    display: none;
+    backdrop-filter: blur(8px);
+    white-space: nowrap;
   }
 
-  .tooltip.visible { display: block; }
-  .tooltip .tt-title { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
-  .tooltip .tt-body { font-size: 11px; color: var(--text-muted); line-height: 1.5; }
+  .hover-tip.visible { display: block; }
 
-  @media (max-width: 900px) {
-    .system-container {
-      grid-template-columns: 1fr;
-      grid-template-rows: auto;
-    }
-    .col-header.sources, .sources-col { grid-column: 1; }
-    .col-header.library, .library-col { grid-column: 1; }
-    .col-header.outputs, .outputs-col { grid-column: 1; }
-    .sources-col { grid-row: auto; padding-right: 0; }
-    .library-col { grid-row: auto; padding: 16px 0; }
-    .outputs-col { grid-row: auto; padding-left: 0; }
-    .flow-strip { display: none; }
+  .hover-tip .ht-sub {
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-top: 2px;
   }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>Product School — Living Content Library</h1>
-  <div class="subtitle">
-    A course-agnostic knowledge layer that compounds with every cohort, every signal, and every feedback loop. Sources flow in. Knowledge compounds. Fresh content flows out.
-  </div>
-  <div class="confidence-line">
-    <div class="cl-phase">High Ambiguity<div class="cl-label">Foundation + Seeding</div></div>
-    <div class="cl-phase">Gaining Clarity<div class="cl-label">Wiring + Curation</div></div>
-    <div class="cl-phase">Production Confidence<div class="cl-label">Compounding + Ecosystem</div></div>
-  </div>
+<header>
+  <h1>Product School <span>Living Content Library</span></h1>
+  <p>Click any node to explore. Watch the data flow.</p>
+</header>
+
+<div class="canvas-wrap">
+  <canvas id="flowCanvas"></canvas>
 </div>
 
-<div class="flow-strip">
-  <div class="flow-label-left">
-    <span class="flow-text">Signal In</span>
-    <div class="flow-arrow-animated">
-      <div class="flow-dot in"></div>
-      <div class="flow-dot in"></div>
-      <div class="flow-dot in"></div>
-    </div>
-  </div>
-  <div class="flow-center">
-    <span class="flow-text" style="color: var(--accent-blue);">Curate &middot; Verify &middot; Compound</span>
-  </div>
-  <div class="flow-label-right">
-    <div class="flow-arrow-animated">
-      <div class="flow-dot out"></div>
-      <div class="flow-dot out"></div>
-      <div class="flow-dot out"></div>
-    </div>
-    <span class="flow-text">Content Out</span>
-  </div>
+<div class="detail-panel" id="detailPanel">
+  <button class="close-btn" id="closePanel">&times;</button>
+  <div class="dp-category" id="dpCategory"></div>
+  <div class="dp-title" id="dpTitle"></div>
+  <div class="dp-desc" id="dpDesc"></div>
+  <div class="dp-meta" id="dpMeta"></div>
 </div>
 
-<div class="system-container">
-
-  <div class="col-header sources">Signal Sources</div>
-  <div class="sources-col">
-    <div class="source-group-label">Internal</div>
-    <div class="source-card internal" data-tip="Student Surveys" data-desc="Post-cohort satisfaction data, per-module ratings, free-text feedback. Three cohorts of Vibe Coding feedback drove a full course redesign. Now this signal feeds all 9 courses.">
-      <div class="name">Student Surveys</div>
-      <div class="desc">NPS, module ratings, open feedback from every cohort</div>
-      <span class="badge">~50 batches/yr</span>
-    </div>
-    <div class="source-card internal" data-tip="Customer Success" data-desc="Recurring questions, confusion points, topic requests, complaints about outdated material. CS is the closest proxy for what the enterprise market wants next.">
-      <div class="name">Customer Success</div>
-      <div class="desc">CS conversations, enterprise pain points, topic requests</div>
-      <span class="badge">High signal</span>
-    </div>
-    <div class="source-card internal" data-tip="Instructor Observations" data-desc="In-class adaptations, questions revealing confusion, concepts that land well, delivery techniques that improve comprehension. Low volume, highest practical value.">
-      <div class="name">Instructor Observations</div>
-      <div class="desc">Teaching adaptations, student confusion patterns</div>
-      <span class="badge">Per cohort</span>
-    </div>
-    <div class="source-card internal" data-tip="Enterprise Demand" data-desc="What enterprise customers request in custom programs, which topics they prioritize, budget-backed signal about market direction.">
-      <div class="name">Enterprise Demand</div>
-      <div class="desc">Custom program requests, topic priorities from buyers</div>
-      <span class="badge">Revenue signal</span>
-    </div>
-    <div class="source-card internal" data-tip="Cohort Transcripts" data-desc="AI-transcribed class sessions capturing student questions, instructor explanations, lab interactions. AI-assisted extraction of insights mapped to content atoms.">
-      <div class="name">Cohort Transcripts</div>
-      <div class="desc">Session recordings, AI-extracted insights</div>
-      <span class="badge">240+ sessions/yr</span>
-    </div>
-    <div class="source-group-label" style="margin-top: 8px;">External</div>
-    <div class="source-card external" data-tip="Lenny's Newsletter &amp; Podcast" data-desc="PM-focused analysis on AI products, pricing, evals, adoption. Already proven: lenny-insights.md maps 10+ sources to specific modules. Highest-signal external source.">
-      <div class="name">Lenny's Newsletter &amp; Podcast</div>
-      <div class="desc">AI product strategy, pricing, evals, adoption tactics</div>
-      <span class="badge">2-4/month</span>
-    </div>
-    <div class="source-card external" data-tip="Product School Events" data-desc="Keynotes, panels, workshops from Product School's own conferences. Proprietary content no competitor can access. Speaker insights that validate or challenge atoms.">
-      <div class="name">Product School Events</div>
-      <div class="desc">Keynotes, panels, speaker transcripts</div>
-      <span class="badge">Proprietary</span>
-    </div>
-    <div class="source-card external" data-tip="LinkedIn &amp; Social" data-desc="High-engagement posts (500+ reactions) from PM and AI thought leaders. Surfaces trends 2-4 weeks before newsletters. New frameworks, contrarian takes, real-world case studies.">
-      <div class="name">LinkedIn &amp; Social</div>
-      <div class="desc">Trending PM/AI posts, new frameworks, case studies</div>
-      <span class="badge">3-5/week</span>
-    </div>
-    <div class="source-card external" data-tip="Substack &amp; Blogs" data-desc="Long-form analysis from independent thinkers: Stratechery, Pragmatic Engineer, AI-focused PM publications. Higher quality than social, lower frequency.">
-      <div class="name">Substack &amp; Blogs</div>
-      <div class="desc">Stratechery, Pragmatic Engineer, AI PM publications</div>
-      <span class="badge">2-3/week</span>
-    </div>
-    <div class="source-card external" data-tip="Reddit &amp; Communities" data-desc="r/ProductManagement, r/artificial, r/MachineLearning. Practitioner discussions, real-world challenges, failure stories. Reveals pain points formal sources miss.">
-      <div class="name">Reddit &amp; Communities</div>
-      <div class="desc">Practitioner discussions, tool reviews, failure stories</div>
-      <span class="badge">1-2/week</span>
-    </div>
-  </div>
-
-  <div class="col-header library">Living Content Library</div>
-  <div class="library-col">
-    <div class="library-core">
-      <div class="title">Content Atoms</div>
-      <div class="atom-grid">
-        <div class="atom-type" data-tip="Concepts" data-desc="Named ideas with canonical definitions. 'Deterministic vs. Probabilistic Software', 'Trust &#8800; Accuracy', 'Comprehension Debt'. The building blocks of knowledge across all courses.">
-          <div class="icon">&#9670;</div>
-          <div class="label">Concepts</div>
-          <div class="examples">Canonical definitions, mental models, named ideas</div>
-        </div>
-        <div class="atom-type" data-tip="Frameworks" data-desc="Reusable structures with steps, scoring, or rubrics. '5 AI Value Archetypes', 'Agent Spectrum', 'Confidence UX', 'Data Flywheel', 'Eval Stack'. The tools students apply to their own products.">
-          <div class="icon">&#9632;</div>
-          <div class="label">Frameworks</div>
-          <div class="examples">Scoring models, rubrics, structured methods</div>
-        </div>
-        <div class="atom-type" data-tip="Evidence" data-desc="Case studies, stats, real-world examples. 'Klarna Automator overcorrection', 'Jasper vs. ChatGPT encroachment', 'Samsung data leak'. Source-attributed and date-verified.">
-          <div class="icon">&#9679;</div>
-          <div class="label">Evidence</div>
-          <div class="examples">Case studies, stats, real-world stories</div>
-        </div>
-        <div class="atom-type" data-tip="Signals" data-desc="Raw external inputs with extracted insights. Lenny podcast takeaways, Gokul's 8 Moats, LinkedIn viral posts. Processed through quality gates before use in courses.">
-          <div class="icon">&#9651;</div>
-          <div class="label">Signals</div>
-          <div class="examples">External insights, trend data, new research</div>
-        </div>
-      </div>
-    </div>
-    <div class="library-meta">
-      <div class="meta-card">
-        <div class="meta-label">Validated</div>
-        <div class="meta-value">&#10003;</div>
-        <div class="meta-sub">Multi-source, cohort-tested</div>
-      </div>
-      <div class="meta-card">
-        <div class="meta-label">Emerging</div>
-        <div class="meta-value">~</div>
-        <div class="meta-sub">Single source, not yet taught</div>
-      </div>
-      <div class="meta-card">
-        <div class="meta-label">Speculative</div>
-        <div class="meta-value">?</div>
-        <div class="meta-sub">Signal only, needs curation</div>
-      </div>
-    </div>
-    <div class="governance">
-      <div class="gov-title">Quality Pipeline</div>
-      <div class="gov-pipeline">
-        <div class="gov-step">Raw Signal</div>
-        <span class="gov-arrow">&rarr;</span>
-        <div class="gov-step">Extract Insight</div>
-        <span class="gov-arrow">&rarr;</span>
-        <div class="gov-step">Source Check</div>
-        <span class="gov-arrow">&rarr;</span>
-        <div class="gov-step">Relevance Gate</div>
-        <span class="gov-arrow">&rarr;</span>
-        <div class="gov-step">Atom Created</div>
-        <span class="gov-arrow">&rarr;</span>
-        <div class="gov-step">Peer Review</div>
-        <span class="gov-arrow">&rarr;</span>
-        <div class="gov-step" style="border-color: var(--accent-emerald); color: var(--accent-emerald);">Validated</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-header outputs">Content Outputs</div>
-  <div class="outputs-col">
-    <div class="output-group-label">Certifications</div>
-    <div class="output-card courses" data-tip="9 Product School Certifications" data-desc="All nine certifications draw from the shared library: Product Management, GTM, Product Experimentation, AI PM, Vibe Coding, AI Evals, Advanced AI Agents, Product Leadership, AI Product Strategy. Content stays current across all of them.">
-      <div class="name">9 Certifications</div>
-      <div class="desc">AI Product Strategy, Vibe Coding, AI Agents, AI for PMs, Leadership, GTM, Experimentation, AI Evals, PM</div>
-      <span class="badge">Always current</span>
-    </div>
-    <div class="output-group-label" style="margin-top: 4px;">Enterprise</div>
-    <div class="output-card enterprise" data-tip="Custom Enterprise Workshops" data-desc="Personalized programs composed from library atoms. Enterprise customers get custom topic combinations with content freshness metadata they can verify. Modular, not monolithic.">
-      <div class="name">Custom Enterprise Workshops</div>
-      <div class="desc">Personalized programs composed from verified atoms, tailored to client industry and role level</div>
-      <span class="badge">Modular composition</span>
-    </div>
-    <div class="output-card enterprise" data-tip="Enterprise Presentations" data-desc="Board-ready materials, executive briefings, and custom slide decks with the latest frameworks, stats, and case studies. Every claim source-attributed, every stat freshness-dated.">
-      <div class="name">Enterprise Presentations</div>
-      <div class="desc">Board-ready materials, executive briefings, custom decks with verified content</div>
-      <span class="badge">Source-attributed</span>
-    </div>
-    <div class="output-group-label" style="margin-top: 4px;">Thought Leadership</div>
-    <div class="output-card content" data-tip="Podcast Material (Carlos)" data-desc="Talking points, frameworks, case studies, and provocative takes sourced from the library. Carlos always has the freshest material for podcast conversations and guest appearances.">
-      <div class="name">Podcast Material</div>
-      <div class="desc">Talking points, frameworks, provocations for Carlos's podcast and guest appearances</div>
-      <span class="badge">Always fresh</span>
-    </div>
-    <div class="output-card content" data-tip="Blog Posts &amp; Articles" data-desc="Long-form thought leadership content built from validated atoms. Every article backed by the same rigor as the certifications. Compounds the Product School brand.">
-      <div class="name">Blog Posts &amp; Articles</div>
-      <div class="desc">Thought leadership content backed by validated library atoms</div>
-      <span class="badge">Brand authority</span>
-    </div>
-    <div class="output-card content" data-tip="LinkedIn &amp; Social Content" data-desc="Frameworks, stats, and provocations formatted for social. Short-form content that drives engagement and funnels to certifications and enterprise programs.">
-      <div class="name">LinkedIn &amp; Social Content</div>
-      <div class="desc">Frameworks, stats, and provocations formatted for engagement and reach</div>
-      <span class="badge">Engagement driver</span>
-    </div>
-    <div class="output-card content" data-tip="Speaker &amp; Conference Materials" data-desc="Conference talks, keynote decks, panel preparation. Speakers pull from the same verified library, ensuring consistent messaging across all Product School representatives.">
-      <div class="name">Speaker &amp; Conference Materials</div>
-      <div class="desc">Keynotes, panel prep, conference decks for PS speakers</div>
-      <span class="badge">Consistent voice</span>
-    </div>
-    <div class="output-card content" data-tip="Newsletter &amp; Email" data-desc="Regular updates to the Product School community with the latest frameworks, case studies, and insights. Content that keeps the community engaged between cohorts.">
-      <div class="name">Newsletter &amp; Email</div>
-      <div class="desc">Community updates with latest frameworks and insights</div>
-      <span class="badge">Community</span>
-    </div>
-  </div>
-
-</div>
-
-<div class="feedback-loop">
-  <div class="loop-bar">
-    <span class="loop-icon">&#8635;</span>
-    <div class="loop-text">
-      <strong>Compounding Feedback Loop:</strong> Courses generate student feedback &rarr; feedback enriches atoms &rarr; enriched atoms improve all courses &rarr; better courses generate richer feedback. Every cohort makes the library smarter. Every output validates or challenges the library. The system compounds.
-    </div>
-    <span class="loop-icon">&#8635;</span>
-  </div>
-</div>
-
-<div class="footer">
-  <div class="tagline">"We build the library. The library builds the courses. The courses build the library."</div>
-  Product School &mdash; Living Content Library Strategy &mdash; April 2026
-</div>
-
-<div class="tooltip" id="tooltip">
-  <div class="tt-title"></div>
-  <div class="tt-body"></div>
+<div class="hover-tip" id="hoverTip">
+  <div id="htLabel"></div>
+  <div class="ht-sub" id="htSub"></div>
 </div>
 
 <script>
-  const tooltip = document.getElementById('tooltip');
-  document.querySelectorAll('[data-tip]').forEach(card => {
-    card.addEventListener('mouseenter', () => {
-      tooltip.querySelector('.tt-title').textContent = card.getAttribute('data-tip');
-      tooltip.querySelector('.tt-body').textContent = card.getAttribute('data-desc');
-      tooltip.classList.add('visible');
-    });
-    card.addEventListener('mousemove', (e) => {
-      const r = tooltip.getBoundingClientRect();
-      tooltip.style.left = ((e.clientX + 16 + r.width > window.innerWidth) ? e.clientX - r.width - 16 : e.clientX + 16) + 'px';
-      tooltip.style.top = ((e.clientY + 16 + r.height > window.innerHeight) ? e.clientY - r.height - 16 : e.clientY + 16) + 'px';
-    });
-    card.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
+const canvas = document.getElementById('flowCanvas');
+const ctx = canvas.getContext('2d');
+let W, H, dpr;
+let hoveredNode = null;
+let animFrame;
+
+function resize() {
+  dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  W = rect.width;
+  H = rect.height;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  layoutNodes();
+}
+
+const COLORS = {
+  cyan: '#22d3ee',
+  violet: '#a78bfa',
+  blue: '#3b82f6',
+  emerald: '#34d399',
+  orange: '#fb923c',
+  pink: '#f472b6',
+  amber: '#fbbf24',
+  rose: '#fb7185',
+};
+
+const sources = [
+  { id: 's1', label: 'Student Surveys', sub: '~50 batches/yr', color: COLORS.cyan, cat: 'internal',
+    desc: 'Post-cohort satisfaction data, per-module ratings, and free-text feedback from every certification. Three cohorts of Vibe Coding feedback drove a full course redesign. In the library model, this signal enriches atoms across all 9 courses.',
+    tags: ['Internal', 'High Volume'] },
+  { id: 's2', label: 'Customer Success', sub: 'High signal', color: COLORS.cyan, cat: 'internal',
+    desc: 'Recurring questions, confusion points, topic requests, and complaints about outdated material from CS conversations. The closest proxy for what enterprise customers want next. Topics requested by 3+ customers get fast-tracked for atom creation.',
+    tags: ['Internal', 'Enterprise Signal'] },
+  { id: 's3', label: 'Instructor Observations', sub: 'Per cohort', color: COLORS.cyan, cat: 'internal',
+    desc: 'In-class adaptations, questions that reveal student confusion, concepts that consistently land well, delivery techniques that improve comprehension. Low volume but the highest practical value for teaching notes on atoms.',
+    tags: ['Internal', 'Teaching Quality'] },
+  { id: 's4', label: 'Enterprise Demand', sub: 'Revenue signal', color: COLORS.cyan, cat: 'internal',
+    desc: 'What enterprise customers request in custom programs, which topics they prioritize, and what gaps they identify. Each request carries budget authority. Demand patterns directly inform which atoms get investment priority.',
+    tags: ['Internal', 'Revenue'] },
+  { id: 's5', label: 'Cohort Transcripts', sub: '240+ sessions/yr', color: COLORS.cyan, cat: 'internal',
+    desc: 'AI-transcribed class sessions capturing student questions, instructor explanations, and lab interactions. AI-assisted extraction surfaces new questions, concepts needing extra explanation, examples that resonated, and student-contributed insights.',
+    tags: ['Internal', 'AI-Assisted'] },
+  { id: 's6', label: "Lenny's Newsletter & Podcast", sub: '2-4/month', color: COLORS.violet, cat: 'external',
+    desc: "PM-focused analysis on AI products, pricing, evals, and adoption. Already proven: lenny-insights.md maps 10+ sources to specific modules with actionable integration notes. Highest-signal external source. Lenny's audience is Product School's audience.",
+    tags: ['External', 'Highest Signal'] },
+  { id: 's7', label: 'Product School Events', sub: 'Proprietary', color: COLORS.violet, cat: 'external',
+    desc: "Keynotes, panels, workshops, and speaker content from Product School's own conferences. Proprietary content no competitor can access. Speaker insights that validate or challenge existing atoms get fast-tracked.",
+    tags: ['External', 'Proprietary'] },
+  { id: 's8', label: 'LinkedIn & Social', sub: '3-5 relevant/week', color: COLORS.violet, cat: 'external',
+    desc: 'High-engagement posts (500+ reactions) from PM and AI thought leaders. Surfaces trends 2-4 weeks before they appear in newsletters. New frameworks, contrarian takes, real-world case studies. High noise but extremely current signal.',
+    tags: ['External', 'Trend Detection'] },
+  { id: 's9', label: 'Substack & Blogs', sub: '2-3 articles/week', color: COLORS.violet, cat: 'external',
+    desc: 'Long-form analysis from independent PM and AI thinkers: Stratechery, Pragmatic Engineer, and emerging AI-focused PM publications. Higher quality than LinkedIn, lower frequency. Often provides the depth needed to promote signals from speculative to emerging.',
+    tags: ['External', 'Deep Analysis'] },
+  { id: 's10', label: 'Reddit & Communities', sub: '1-2 threads/week', color: COLORS.violet, cat: 'external',
+    desc: 'r/ProductManagement, r/artificial, r/MachineLearning. Practitioner discussions, real-world challenges, tool comparisons, and failure stories. Reveals pain points that polished publications miss. Valuable for identifying what confuses PMs in the field.',
+    tags: ['External', 'Practitioner Signal'] },
+];
+
+const libraryNodes = [
+  { id: 'l1', label: 'Concepts', sub: 'Canonical definitions', color: COLORS.blue,
+    desc: "Named ideas with canonical definitions and version history. Examples: 'Deterministic vs. Probabilistic Software', 'Trust \u2260 Accuracy', 'Comprehension Debt', 'Confidence UX'. The building blocks of knowledge that all courses share. Each concept has one canonical definition in the library; courses adapt depth, not definition.",
+    tags: ['Atom Type', '120+ identified'] },
+  { id: 'l2', label: 'Frameworks', sub: 'Reusable models', color: COLORS.blue,
+    desc: "Reusable mental models with structure, scoring criteria, and adaptation guidance. Examples: '5 AI Value Archetypes', 'Agent Spectrum', 'Data Flywheel', 'Eval Stack', '8 Moats'. The tools students apply to their own products. If someone's artifact looks exactly like the template, that's a smell.",
+    tags: ['Atom Type', 'Cross-course'] },
+  { id: 'l3', label: 'Evidence', sub: 'Case studies & stats', color: COLORS.blue,
+    desc: "Case studies, data points, statistics, and real-world examples with source attribution and recency metadata. Examples: 'Klarna Automator overcorrection', 'Jasper vs. ChatGPT encroachment', '73% of vibe-coded apps fail to reach production'. Every claim traces back to its source.",
+    tags: ['Atom Type', 'Source-verified'] },
+  { id: 'l4', label: 'Signals', sub: 'Emerging insights', color: COLORS.blue,
+    desc: "Raw or lightly processed external inputs with extracted insights. Podcast transcript excerpts, LinkedIn posts, research findings. Processed through quality gates (Relevance, Novelty, Credibility, Actionability) before any course can use them. Most start at Speculative confidence.",
+    tags: ['Atom Type', 'Quality-gated'] },
+];
+
+const outputs = [
+  { id: 'o1', label: '9 Certifications', sub: 'Always current', color: COLORS.emerald, cat: 'courses',
+    desc: 'All nine Product School certifications draw from the shared library: Product Management, GTM, Product Experimentation, AI PM, Vibe Coding, AI Evals, Advanced AI Agents, Product Leadership, AI Product Strategy. When an atom is updated, every course that references it gets fresher content automatically.',
+    tags: ['Courses', '9 Programs'] },
+  { id: 'o2', label: 'Enterprise Workshops', sub: 'Custom composition', color: COLORS.orange, cat: 'enterprise',
+    desc: 'Personalized programs composed from library atoms. Enterprise customers get custom topic combinations tailored to their industry, role level, and strategic priorities. Content freshness metadata lets them verify every element is current. Modular, not monolithic.',
+    tags: ['Enterprise', 'Revenue Driver'] },
+  { id: 'o3', label: 'Enterprise Presentations', sub: 'Source-attributed', color: COLORS.orange, cat: 'enterprise',
+    desc: 'Board-ready materials, executive briefings, and custom slide decks with the latest frameworks, stats, and case studies pulled directly from the library. Every claim is source-attributed. Every stat carries a freshness date.',
+    tags: ['Enterprise', 'Board-Ready'] },
+  { id: 'o4', label: "Carlos's Podcast", sub: 'Always fresh material', color: COLORS.pink, cat: 'thought-leadership',
+    desc: "Talking points, frameworks, case studies, and provocative takes sourced from the library for Carlos's podcast and guest appearances. The library ensures Carlos always has the freshest, most validated material. No more scrambling for recent examples.",
+    tags: ['Thought Leadership', 'CEO Voice'] },
+  { id: 'o5', label: 'Blog Posts & Articles', sub: 'Brand authority', color: COLORS.pink, cat: 'thought-leadership',
+    desc: 'Long-form thought leadership content built from validated atoms. Every article backed by the same rigor as the certifications. The library makes content creation faster: authors compose from verified atoms instead of researching from scratch.',
+    tags: ['Thought Leadership', 'Content Marketing'] },
+  { id: 'o6', label: 'LinkedIn & Social', sub: 'Engagement driver', color: COLORS.pink, cat: 'thought-leadership',
+    desc: 'Frameworks, stats, and provocations formatted for social media. Short-form content that drives engagement and funnels audiences to certifications and enterprise programs. Consistent with what is taught in courses because it comes from the same source.',
+    tags: ['Thought Leadership', 'Social'] },
+  { id: 'o7', label: 'Speaker Materials', sub: 'Consistent voice', color: COLORS.pink, cat: 'thought-leadership',
+    desc: 'Conference talks, keynote decks, and panel preparation materials. All Product School speakers pull from the same verified library, ensuring consistent messaging. No more different speakers citing different (or outdated) stats for the same concept.',
+    tags: ['Thought Leadership', 'Events'] },
+  { id: 'o8', label: 'Newsletter & Email', sub: 'Community engagement', color: COLORS.pink, cat: 'thought-leadership',
+    desc: 'Regular updates to the Product School community with the latest frameworks, case studies, and insights. Content that keeps the community engaged between cohorts. Sourced from the library so it never conflicts with what is taught in class.',
+    tags: ['Thought Leadership', 'Community'] },
+];
+
+let nodes = [];
+let connections = [];
+let particles = [];
+let feedbackParticles = [];
+let feedbackPath = [];
+
+function layoutNodes() {
+  const pad = 40;
+  const leftX = pad + 100;
+  const rightX = W - pad - 100;
+  const centerX = W / 2;
+  const topY = 30;
+  const bottomY = H - 50;
+
+  const srcSpacing = Math.min(48, (bottomY - topY - 40) / (sources.length - 1));
+  const srcStartY = topY + (bottomY - topY - srcSpacing * (sources.length - 1)) / 2;
+
+  const outSpacing = Math.min(52, (bottomY - topY - 40) / (outputs.length - 1));
+  const outStartY = topY + (bottomY - topY - outSpacing * (outputs.length - 1)) / 2;
+
+  const libSpacing = 64;
+  const libStartY = (topY + bottomY) / 2 - (libSpacing * (libraryNodes.length - 1)) / 2;
+
+  nodes = [];
+
+  sources.forEach((s, i) => {
+    nodes.push({ ...s, x: leftX, y: srcStartY + i * srcSpacing, r: 8, type: 'source' });
   });
+
+  libraryNodes.forEach((l, i) => {
+    nodes.push({ ...l, x: centerX, y: libStartY + i * libSpacing, r: 14, type: 'library' });
+  });
+
+  outputs.forEach((o, i) => {
+    nodes.push({ ...o, x: rightX, y: outStartY + i * outSpacing, r: 8, type: 'output' });
+  });
+
+  connections = [];
+  const srcNodes = nodes.filter(n => n.type === 'source');
+  const libNodes = nodes.filter(n => n.type === 'library');
+  const outNodes = nodes.filter(n => n.type === 'output');
+
+  srcNodes.forEach(s => {
+    const target = libNodes[Math.floor(Math.random() * libNodes.length)];
+    connections.push({ from: s, to: target, type: 'in' });
+  });
+
+  outNodes.forEach(o => {
+    const source = libNodes[Math.floor(Math.random() * libNodes.length)];
+    connections.push({ from: source, to: o, type: 'out' });
+  });
+
+  // Feedback loop path: from right side, curves down and back to library
+  const fbStartX = rightX + 30;
+  const fbEndX = centerX;
+  const fbY = bottomY + 10;
+  feedbackPath = [
+    { x: rightX, y: (outStartY + outStartY + (outputs.length - 1) * outSpacing) / 2 },
+    { x: fbStartX + 20, y: fbY - 10 },
+    { x: (fbStartX + fbEndX) / 2, y: fbY + 15 },
+    { x: fbEndX - 30, y: fbY - 10 },
+    { x: fbEndX, y: libStartY + (libraryNodes.length - 1) * libSpacing + 30 },
+  ];
+
+  initParticles();
+}
+
+function initParticles() {
+  particles = [];
+  connections.forEach((conn, ci) => {
+    const count = 2 + Math.floor(Math.random() * 2);
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        conn: ci,
+        t: Math.random(),
+        speed: 0.002 + Math.random() * 0.003,
+        size: 1.5 + Math.random() * 1.5,
+        alpha: 0.4 + Math.random() * 0.5,
+      });
+    }
+  });
+
+  feedbackParticles = [];
+  for (let i = 0; i < 8; i++) {
+    feedbackParticles.push({
+      t: Math.random(),
+      speed: 0.0015 + Math.random() * 0.002,
+      size: 2 + Math.random() * 1.5,
+      alpha: 0.5 + Math.random() * 0.4,
+    });
+  }
+}
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+function catmullRom(pts, t) {
+  const n = pts.length - 1;
+  const seg = Math.min(Math.floor(t * n), n - 1);
+  const lt = (t * n) - seg;
+
+  const p0 = pts[Math.max(seg - 1, 0)];
+  const p1 = pts[seg];
+  const p2 = pts[Math.min(seg + 1, n)];
+  const p3 = pts[Math.min(seg + 2, n)];
+
+  const t2 = lt * lt;
+  const t3 = t2 * lt;
+
+  return {
+    x: 0.5 * ((2*p1.x) + (-p0.x+p2.x)*lt + (2*p0.x-5*p1.x+4*p2.x-p3.x)*t2 + (-p0.x+3*p1.x-3*p2.x+p3.x)*t3),
+    y: 0.5 * ((2*p1.y) + (-p0.y+p2.y)*lt + (2*p0.y-5*p1.y+4*p2.y-p3.y)*t2 + (-p0.y+3*p1.y-3*p2.y+p3.y)*t3),
+  };
+}
+
+function getConnectionPoint(conn, t) {
+  const f = conn.from;
+  const to = conn.to;
+  const midX = (f.x + to.x) / 2;
+  const pts = [
+    { x: f.x, y: f.y },
+    { x: midX, y: f.y + (to.y - f.y) * 0.15 },
+    { x: midX, y: to.y - (to.y - f.y) * 0.15 },
+    { x: to.x, y: to.y },
+  ];
+  return catmullRom(pts, t);
+}
+
+function getFeedbackPoint(t) {
+  return catmullRom(feedbackPath, t);
+}
+
+function hexToRgb(hex) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `${r},${g},${b}`;
+}
+
+function drawConnection(conn, alpha) {
+  const steps = 40;
+  ctx.beginPath();
+  for (let i = 0; i <= steps; i++) {
+    const p = getConnectionPoint(conn, i / steps);
+    if (i === 0) ctx.moveTo(p.x, p.y);
+    else ctx.lineTo(p.x, p.y);
+  }
+  const color = conn.type === 'in' ? COLORS.cyan : COLORS.emerald;
+  ctx.strokeStyle = `rgba(${hexToRgb(color)}, ${0.06 * alpha})`;
+  ctx.lineWidth = 1;
+  ctx.stroke();
+}
+
+function drawFeedbackCurve() {
+  const steps = 60;
+  ctx.beginPath();
+  for (let i = 0; i <= steps; i++) {
+    const p = getFeedbackPoint(i / steps);
+    if (i === 0) ctx.moveTo(p.x, p.y);
+    else ctx.lineTo(p.x, p.y);
+  }
+  ctx.strokeStyle = `rgba(${hexToRgb(COLORS.amber)}, 0.12)`;
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([6, 4]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Label
+  const mid = getFeedbackPoint(0.5);
+  ctx.font = '600 10px -apple-system, system-ui, sans-serif';
+  ctx.fillStyle = `rgba(${hexToRgb(COLORS.amber)}, 0.7)`;
+  ctx.textAlign = 'center';
+  ctx.fillText('FEEDBACK LOOP — Outputs enrich the library continuously', mid.x, mid.y + 18);
+}
+
+function drawNode(node) {
+  const isHovered = hoveredNode && hoveredNode.id === node.id;
+  const r = isHovered ? node.r + 3 : node.r;
+  const rgb = hexToRgb(node.color);
+
+  // Glow
+  if (isHovered || node.type === 'library') {
+    const glow = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, r * 3);
+    glow.addColorStop(0, `rgba(${rgb}, ${isHovered ? 0.25 : 0.1})`);
+    glow.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(node.x, node.y, r * 3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Node body
+  ctx.beginPath();
+  ctx.arc(node.x, node.y, r, 0, Math.PI * 2);
+  ctx.fillStyle = `rgba(${rgb}, ${isHovered ? 0.35 : 0.15})`;
+  ctx.fill();
+  ctx.strokeStyle = `rgba(${rgb}, ${isHovered ? 1 : 0.6})`;
+  ctx.lineWidth = isHovered ? 2 : 1.5;
+  ctx.stroke();
+
+  // Inner dot
+  ctx.beginPath();
+  ctx.arc(node.x, node.y, r * 0.35, 0, Math.PI * 2);
+  ctx.fillStyle = node.color;
+  ctx.fill();
+
+  // Label
+  ctx.font = `${isHovered ? '700' : '600'} 11px -apple-system, system-ui, sans-serif`;
+  ctx.fillStyle = isHovered ? node.color : `rgba(${hexToRgb(COLORS.blue)}, 0)`;
+
+  if (node.type === 'source') {
+    ctx.textAlign = 'right';
+    ctx.fillStyle = isHovered ? node.color : 'rgba(226,232,240,0.85)';
+    ctx.fillText(node.label, node.x - r - 10, node.y + 1);
+    ctx.font = '400 9px -apple-system, system-ui, sans-serif';
+    ctx.fillStyle = isHovered ? `rgba(${rgb}, 0.8)` : 'rgba(148,163,184,0.6)';
+    ctx.fillText(node.sub, node.x - r - 10, node.y + 13);
+  } else if (node.type === 'output') {
+    ctx.textAlign = 'left';
+    ctx.fillStyle = isHovered ? node.color : 'rgba(226,232,240,0.85)';
+    ctx.fillText(node.label, node.x + r + 10, node.y + 1);
+    ctx.font = '400 9px -apple-system, system-ui, sans-serif';
+    ctx.fillStyle = isHovered ? `rgba(${rgb}, 0.8)` : 'rgba(148,163,184,0.6)';
+    ctx.fillText(node.sub, node.x + r + 10, node.y + 13);
+  } else {
+    ctx.textAlign = 'center';
+    ctx.fillStyle = isHovered ? node.color : 'rgba(226,232,240,0.9)';
+    ctx.font = `${isHovered ? '700' : '600'} 12px -apple-system, system-ui, sans-serif`;
+    ctx.fillText(node.label, node.x, node.y - r - 10);
+    ctx.font = '400 10px -apple-system, system-ui, sans-serif';
+    ctx.fillStyle = isHovered ? `rgba(${rgb}, 0.8)` : 'rgba(148,163,184,0.7)';
+    ctx.fillText(node.sub, node.x, node.y - r + 2);
+  }
+}
+
+function drawColumnLabels() {
+  const srcNodes = nodes.filter(n => n.type === 'source');
+  const outNodes = nodes.filter(n => n.type === 'output');
+  const libNodes = nodes.filter(n => n.type === 'library');
+
+  ctx.font = '700 10px -apple-system, system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.letterSpacing = '2px';
+
+  if (srcNodes.length) {
+    ctx.fillStyle = `rgba(${hexToRgb(COLORS.cyan)}, 0.5)`;
+    ctx.fillText('SIGNAL SOURCES', srcNodes[0].x, srcNodes[0].y - 36);
+  }
+
+  if (libNodes.length) {
+    ctx.fillStyle = `rgba(${hexToRgb(COLORS.blue)}, 0.6)`;
+    const libTop = Math.min(...libNodes.map(n => n.y));
+    ctx.font = '800 14px -apple-system, system-ui, sans-serif';
+    ctx.fillText('LIVING CONTENT LIBRARY', libNodes[0].x, libTop - 40);
+    ctx.font = '400 10px -apple-system, system-ui, sans-serif';
+    ctx.fillStyle = 'rgba(148,163,184,0.5)';
+    ctx.fillText('Curate \u00b7 Verify \u00b7 Compound', libNodes[0].x, libTop - 24);
+  }
+
+  if (outNodes.length) {
+    ctx.fillStyle = `rgba(${hexToRgb(COLORS.emerald)}, 0.5)`;
+    ctx.font = '700 10px -apple-system, system-ui, sans-serif';
+    ctx.fillText('CONTENT OUTPUTS', outNodes[0].x, outNodes[0].y - 36);
+  }
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+
+  // Connections
+  connections.forEach(c => drawConnection(c, 1));
+
+  // Feedback curve
+  drawFeedbackCurve();
+
+  // Particles on connections
+  particles.forEach(p => {
+    p.t += p.speed;
+    if (p.t > 1) p.t -= 1;
+    const conn = connections[p.conn];
+    const pos = getConnectionPoint(conn, p.t);
+    const color = conn.type === 'in' ? COLORS.cyan : COLORS.emerald;
+    const rgb = hexToRgb(color);
+
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, p.size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${rgb}, ${p.alpha * (0.5 + 0.5 * Math.sin(p.t * Math.PI * 2))})`;
+    ctx.fill();
+
+    // Particle glow
+    const pg = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, p.size * 4);
+    pg.addColorStop(0, `rgba(${rgb}, 0.15)`);
+    pg.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = pg;
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, p.size * 4, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // Feedback particles
+  feedbackParticles.forEach(p => {
+    p.t += p.speed;
+    if (p.t > 1) p.t -= 1;
+    const pos = getFeedbackPoint(p.t);
+    const rgb = hexToRgb(COLORS.amber);
+
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, p.size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${rgb}, ${p.alpha * (0.5 + 0.5 * Math.sin(p.t * Math.PI * 4))})`;
+    ctx.fill();
+
+    const pg = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, p.size * 3);
+    pg.addColorStop(0, `rgba(${rgb}, 0.2)`);
+    pg.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = pg;
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, p.size * 3, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // Column labels
+  drawColumnLabels();
+
+  // Nodes
+  nodes.forEach(n => drawNode(n));
+
+  animFrame = requestAnimationFrame(draw);
+}
+
+// Interaction
+function getNodeAt(mx, my) {
+  for (let i = nodes.length - 1; i >= 0; i--) {
+    const n = nodes[i];
+    const d = Math.sqrt((mx - n.x) ** 2 + (my - n.y) ** 2);
+    if (d < n.r + 12) return n;
+  }
+  return null;
+}
+
+const tip = document.getElementById('hoverTip');
+const htLabel = document.getElementById('htLabel');
+const htSub = document.getElementById('htSub');
+
+canvas.addEventListener('mousemove', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const node = getNodeAt(mx, my);
+
+  if (node) {
+    hoveredNode = node;
+    canvas.style.cursor = 'pointer';
+    htLabel.textContent = node.label;
+    htSub.textContent = 'Click to explore';
+    tip.classList.add('visible');
+    const tx = e.clientX + 16;
+    const ty = e.clientY - 10;
+    tip.style.left = (tx + tip.offsetWidth > window.innerWidth ? e.clientX - tip.offsetWidth - 8 : tx) + 'px';
+    tip.style.top = ty + 'px';
+  } else {
+    hoveredNode = null;
+    canvas.style.cursor = 'default';
+    tip.classList.remove('visible');
+  }
+});
+
+canvas.addEventListener('mouseleave', () => {
+  hoveredNode = null;
+  tip.classList.remove('visible');
+});
+
+const panel = document.getElementById('detailPanel');
+const dpCat = document.getElementById('dpCategory');
+const dpTitle = document.getElementById('dpTitle');
+const dpDesc = document.getElementById('dpDesc');
+const dpMeta = document.getElementById('dpMeta');
+
+canvas.addEventListener('click', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const node = getNodeAt(mx, my);
+
+  if (node) {
+    let catLabel = '';
+    let catColor = node.color;
+    if (node.type === 'source') catLabel = node.cat === 'internal' ? 'Internal Source' : 'External Source';
+    else if (node.type === 'library') catLabel = 'Content Atom Type';
+    else {
+      catLabel = node.cat === 'courses' ? 'Certifications' : node.cat === 'enterprise' ? 'Enterprise Output' : 'Thought Leadership';
+    }
+
+    dpCat.textContent = catLabel;
+    dpCat.style.color = node.color;
+    dpTitle.textContent = node.label;
+    dpDesc.textContent = node.desc;
+
+    dpMeta.innerHTML = '';
+    if (node.tags) {
+      node.tags.forEach(tag => {
+        const el = document.createElement('span');
+        el.className = 'dp-tag';
+        el.textContent = tag;
+        el.style.background = `rgba(${hexToRgb(node.color)}, 0.15)`;
+        el.style.color = node.color;
+        dpMeta.appendChild(el);
+      });
+    }
+
+    panel.classList.add('open');
+    tip.classList.remove('visible');
+  }
+});
+
+document.getElementById('closePanel').addEventListener('click', () => {
+  panel.classList.remove('open');
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') panel.classList.remove('open');
+});
+
+window.addEventListener('resize', resize);
+resize();
+draw();
 </script>
 
 </body>
