@@ -7,7 +7,6 @@
 <style>
   :root {
     --bg: #06080f;
-    --surface: rgba(15, 23, 42, 0.85);
     --surface-solid: #0f172a;
     --border: rgba(51, 65, 85, 0.5);
     --text: #e2e8f0;
@@ -18,61 +17,49 @@
     --emerald: #34d399;
     --amber: #fbbf24;
     --violet: #a78bfa;
-    --rose: #fb7185;
     --orange: #fb923c;
     --pink: #f472b6;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   body {
     font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     background: var(--bg);
     color: var(--text);
-    overflow-x: hidden;
+    overflow: hidden;
     height: 100vh;
     display: flex;
     flex-direction: column;
   }
-
   header {
     text-align: center;
-    padding: 28px 24px 12px;
+    padding: 20px 24px 8px;
     flex-shrink: 0;
   }
-
   header h1 {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 700;
-    letter-spacing: -0.3px;
     color: var(--text);
   }
-
   header h1 span {
     background: linear-gradient(135deg, var(--cyan), var(--blue));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
-
   header p {
-    font-size: 12px;
+    font-size: 11px;
     color: var(--text-dim);
-    margin-top: 4px;
+    margin-top: 3px;
   }
-
   .canvas-wrap {
     flex: 1;
     position: relative;
     min-height: 0;
   }
-
   canvas#flowCanvas {
     display: block;
     width: 100%;
     height: 100%;
   }
-
-  /* Detail panel */
   .detail-panel {
     position: fixed;
     right: -400px;
@@ -86,107 +73,39 @@
     padding: 32px 24px;
     overflow-y: auto;
   }
-
   .detail-panel.open { right: 0; }
-
   .detail-panel .close-btn {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
+    position: absolute; top: 16px; right: 16px;
+    background: none; border: 1px solid var(--border);
+    color: var(--text-muted); width: 32px; height: 32px;
+    border-radius: 8px; cursor: pointer; font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
   }
-
-  .detail-panel .close-btn:hover {
-    border-color: var(--text-muted);
-    color: var(--text);
-  }
-
-  .detail-panel .dp-category {
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    margin-bottom: 8px;
-  }
-
-  .detail-panel .dp-title {
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 12px;
-    line-height: 1.3;
-  }
-
-  .detail-panel .dp-desc {
-    font-size: 13px;
-    color: var(--text-muted);
-    line-height: 1.7;
-    margin-bottom: 20px;
-  }
-
-  .detail-panel .dp-meta {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  .detail-panel .dp-tag {
-    font-size: 10px;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  /* Tooltip */
+  .detail-panel .close-btn:hover { border-color: var(--text-muted); color: var(--text); }
+  .detail-panel .dp-category { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+  .detail-panel .dp-title { font-size: 20px; font-weight: 700; margin-bottom: 12px; line-height: 1.3; }
+  .detail-panel .dp-desc { font-size: 13px; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; }
+  .detail-panel .dp-meta { display: flex; gap: 12px; flex-wrap: wrap; }
+  .detail-panel .dp-tag { font-size: 10px; font-weight: 600; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
   .hover-tip {
     position: fixed;
     background: rgba(15, 23, 42, 0.95);
     border: 1px solid rgba(59, 130, 246, 0.4);
-    border-radius: 8px;
-    padding: 8px 12px;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text);
-    pointer-events: none;
-    z-index: 150;
-    display: none;
-    backdrop-filter: blur(8px);
-    white-space: nowrap;
+    border-radius: 8px; padding: 8px 12px;
+    font-size: 12px; font-weight: 600; color: var(--text);
+    pointer-events: none; z-index: 150; display: none;
+    backdrop-filter: blur(8px); white-space: nowrap;
   }
-
   .hover-tip.visible { display: block; }
-
-  .hover-tip .ht-sub {
-    font-size: 10px;
-    font-weight: 400;
-    color: var(--text-muted);
-    margin-top: 2px;
-  }
+  .hover-tip .ht-sub { font-size: 10px; font-weight: 400; color: var(--text-muted); margin-top: 2px; }
 </style>
 </head>
 <body>
-
 <header>
   <h1>Product School <span>Living Content Library</span></h1>
-  <p>Click any node to explore. Watch the data flow.</p>
+  <p>Click any node to explore details. Watch the data flow.</p>
 </header>
-
-<div class="canvas-wrap">
-  <canvas id="flowCanvas"></canvas>
-</div>
-
+<div class="canvas-wrap"><canvas id="flowCanvas"></canvas></div>
 <div class="detail-panel" id="detailPanel">
   <button class="close-btn" id="closePanel">&times;</button>
   <div class="dp-category" id="dpCategory"></div>
@@ -194,308 +113,359 @@
   <div class="dp-desc" id="dpDesc"></div>
   <div class="dp-meta" id="dpMeta"></div>
 </div>
-
-<div class="hover-tip" id="hoverTip">
-  <div id="htLabel"></div>
-  <div class="ht-sub" id="htSub"></div>
-</div>
+<div class="hover-tip" id="hoverTip"><div id="htLabel"></div><div class="ht-sub" id="htSub"></div></div>
 
 <script>
 const canvas = document.getElementById('flowCanvas');
 const ctx = canvas.getContext('2d');
 let W, H, dpr;
 let hoveredNode = null;
-let animFrame;
+
+const C = {
+  cyan: '#22d3ee', violet: '#a78bfa', blue: '#3b82f6',
+  emerald: '#34d399', orange: '#fb923c', pink: '#f472b6', amber: '#fbbf24',
+};
+
+function hexToRgb(hex) {
+  return `${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)}`;
+}
+
+const sources = [
+  { id:'s1', label:'Student Surveys', sub:'~50 batches/yr', color:C.cyan, group:'internal',
+    desc:'Post-cohort satisfaction data, per-module ratings, and free-text feedback from every certification. In the library model, this signal enriches atoms across all 9 courses.', tags:['Internal','High Volume'] },
+  { id:'s2', label:'Customer Success', sub:'High signal', color:C.cyan, group:'internal',
+    desc:'Recurring questions, confusion points, topic requests from CS conversations. The closest proxy for what enterprise customers want next.', tags:['Internal','Enterprise Signal'] },
+  { id:'s3', label:'Instructor Observations', sub:'Per cohort', color:C.cyan, group:'internal',
+    desc:'In-class adaptations, questions revealing confusion, concepts that land well. Low volume but highest practical value for teaching notes.', tags:['Internal','Teaching Quality'] },
+  { id:'s4', label:'Enterprise Demand', sub:'Revenue signal', color:C.cyan, group:'internal',
+    desc:'What enterprise customers request in custom programs, which topics they prioritize. Each request carries budget authority.', tags:['Internal','Revenue'] },
+  { id:'s5', label:'Cohort Transcripts', sub:'240+ sessions/yr', color:C.cyan, group:'internal',
+    desc:'AI-transcribed class sessions. AI-assisted extraction surfaces new questions, concepts needing extra explanation, and student-contributed insights.', tags:['Internal','AI-Assisted'] },
+  { id:'s6', label:"Lenny's Newsletter & Podcast", sub:'2-4/month', color:C.violet, group:'external',
+    desc:"PM-focused analysis on AI products, pricing, evals, adoption. Highest-signal external source. Already proven with lenny-insights.md mapping 10+ sources to modules.", tags:['External','Highest Signal'] },
+  { id:'s7', label:'Product School Events', sub:'Proprietary', color:C.violet, group:'external',
+    desc:"Keynotes, panels, workshops from Product School's own conferences. Proprietary content no competitor can access.", tags:['External','Proprietary'] },
+  { id:'s8', label:'LinkedIn & Social', sub:'3-5/week', color:C.violet, group:'external',
+    desc:'High-engagement posts from PM and AI thought leaders. Surfaces trends 2-4 weeks before newsletters.', tags:['External','Trend Detection'] },
+  { id:'s9', label:'Substack & Blogs', sub:'2-3/week', color:C.violet, group:'external',
+    desc:'Long-form analysis from Stratechery, Pragmatic Engineer, and AI-focused PM publications. Higher quality, lower frequency.', tags:['External','Deep Analysis'] },
+  { id:'s10', label:'Reddit & Communities', sub:'1-2/week', color:C.violet, group:'external',
+    desc:'r/ProductManagement, r/artificial. Practitioner discussions, real-world challenges, failure stories that polished publications miss.', tags:['External','Practitioner Signal'] },
+];
+
+const libAtoms = [
+  { id:'l1', label:'Concepts', sub:'Canonical definitions', color:C.blue,
+    desc:"Named ideas with canonical definitions. Examples: 'Deterministic vs. Probabilistic Software', 'Trust \u2260 Accuracy', 'Comprehension Debt'. One canonical definition; courses adapt depth, not definition.", tags:['Atom Type','120+ identified'] },
+  { id:'l2', label:'Frameworks', sub:'Reusable models', color:C.blue,
+    desc:"Reusable mental models with structure and scoring. Examples: '5 AI Value Archetypes', 'Agent Spectrum', 'Data Flywheel', 'Eval Stack', '8 Moats'.", tags:['Atom Type','Cross-course'] },
+  { id:'l3', label:'Evidence', sub:'Case studies & stats', color:C.blue,
+    desc:"Case studies, data points, statistics with source attribution and recency metadata. Examples: 'Klarna Automator overcorrection', 'Jasper vs. ChatGPT encroachment'.", tags:['Atom Type','Source-verified'] },
+  { id:'l4', label:'Signals', sub:'Emerging insights', color:C.blue,
+    desc:"Raw or lightly processed external inputs with extracted insights. Processed through quality gates (Relevance, Novelty, Credibility, Actionability) before course use.", tags:['Atom Type','Quality-gated'] },
+];
+
+const outputs = [
+  { id:'o1', label:'9 Certifications', sub:'Always current', color:C.emerald, group:'certifications',
+    desc:'All nine certifications draw from the shared library. When an atom is updated, every referencing course gets fresher content automatically.', tags:['Courses','9 Programs'] },
+  { id:'o2', label:'Enterprise Workshops', sub:'Custom composition', color:C.orange, group:'enterprise',
+    desc:'Personalized programs composed from library atoms. Tailored to client industry, role level, and strategic priorities.', tags:['Enterprise','Revenue Driver'] },
+  { id:'o3', label:'Enterprise Presentations', sub:'Source-attributed', color:C.orange, group:'enterprise',
+    desc:'Board-ready materials, executive briefings, custom decks. Every claim source-attributed, every stat freshness-dated.', tags:['Enterprise','Board-Ready'] },
+  { id:'o4', label:"Carlos's Podcast", sub:'Always fresh', color:C.pink, group:'thought-leadership',
+    desc:"Talking points, frameworks, provocative takes sourced from the library for Carlos's podcast and guest appearances.", tags:['Thought Leadership','CEO Voice'] },
+  { id:'o5', label:'Blog Posts & Articles', sub:'Brand authority', color:C.pink, group:'thought-leadership',
+    desc:'Long-form thought leadership built from validated atoms. Same rigor as the certifications.', tags:['Thought Leadership','Content Marketing'] },
+  { id:'o6', label:'LinkedIn & Social', sub:'Engagement driver', color:C.pink, group:'thought-leadership',
+    desc:'Frameworks, stats, and provocations formatted for social. Drives engagement and funnels to certifications and enterprise.', tags:['Thought Leadership','Social'] },
+  { id:'o7', label:'Speaker Materials', sub:'Consistent voice', color:C.pink, group:'thought-leadership',
+    desc:'Conference talks, keynote decks, panel prep. All speakers pull from the same verified library.', tags:['Thought Leadership','Events'] },
+  { id:'o8', label:'Newsletter & Email', sub:'Community', color:C.pink, group:'thought-leadership',
+    desc:'Community updates with latest frameworks and insights. Never conflicts with what is taught in class.', tags:['Thought Leadership','Community'] },
+];
+
+// Layout
+let allNodes = [];
+let layout = {};
 
 function resize() {
   dpr = window.devicePixelRatio || 1;
   const rect = canvas.parentElement.getBoundingClientRect();
-  W = rect.width;
-  H = rect.height;
-  canvas.width = W * dpr;
-  canvas.height = H * dpr;
-  canvas.style.width = W + 'px';
-  canvas.style.height = H + 'px';
+  W = rect.width; H = rect.height;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  layoutNodes();
+  computeLayout();
 }
 
-const COLORS = {
-  cyan: '#22d3ee',
-  violet: '#a78bfa',
-  blue: '#3b82f6',
-  emerald: '#34d399',
-  orange: '#fb923c',
-  pink: '#f472b6',
-  amber: '#fbbf24',
-  rose: '#fb7185',
-};
+function computeLayout() {
+  const margin = 20;
+  const srcColX = margin + 10;
+  const srcColW = W * 0.22;
+  const outColX = W - margin - W * 0.22;
+  const outColW = W * 0.22;
+  const libLeft = srcColX + srcColW + 40;
+  const libRight = outColX - 40;
+  const libCX = (libLeft + libRight) / 2;
+  const libW = libRight - libLeft;
 
-const sources = [
-  { id: 's1', label: 'Student Surveys', sub: '~50 batches/yr', color: COLORS.cyan, cat: 'internal',
-    desc: 'Post-cohort satisfaction data, per-module ratings, and free-text feedback from every certification. Three cohorts of Vibe Coding feedback drove a full course redesign. In the library model, this signal enriches atoms across all 9 courses.',
-    tags: ['Internal', 'High Volume'] },
-  { id: 's2', label: 'Customer Success', sub: 'High signal', color: COLORS.cyan, cat: 'internal',
-    desc: 'Recurring questions, confusion points, topic requests, and complaints about outdated material from CS conversations. The closest proxy for what enterprise customers want next. Topics requested by 3+ customers get fast-tracked for atom creation.',
-    tags: ['Internal', 'Enterprise Signal'] },
-  { id: 's3', label: 'Instructor Observations', sub: 'Per cohort', color: COLORS.cyan, cat: 'internal',
-    desc: 'In-class adaptations, questions that reveal student confusion, concepts that consistently land well, delivery techniques that improve comprehension. Low volume but the highest practical value for teaching notes on atoms.',
-    tags: ['Internal', 'Teaching Quality'] },
-  { id: 's4', label: 'Enterprise Demand', sub: 'Revenue signal', color: COLORS.cyan, cat: 'internal',
-    desc: 'What enterprise customers request in custom programs, which topics they prioritize, and what gaps they identify. Each request carries budget authority. Demand patterns directly inform which atoms get investment priority.',
-    tags: ['Internal', 'Revenue'] },
-  { id: 's5', label: 'Cohort Transcripts', sub: '240+ sessions/yr', color: COLORS.cyan, cat: 'internal',
-    desc: 'AI-transcribed class sessions capturing student questions, instructor explanations, and lab interactions. AI-assisted extraction surfaces new questions, concepts needing extra explanation, examples that resonated, and student-contributed insights.',
-    tags: ['Internal', 'AI-Assisted'] },
-  { id: 's6', label: "Lenny's Newsletter & Podcast", sub: '2-4/month', color: COLORS.violet, cat: 'external',
-    desc: "PM-focused analysis on AI products, pricing, evals, and adoption. Already proven: lenny-insights.md maps 10+ sources to specific modules with actionable integration notes. Highest-signal external source. Lenny's audience is Product School's audience.",
-    tags: ['External', 'Highest Signal'] },
-  { id: 's7', label: 'Product School Events', sub: 'Proprietary', color: COLORS.violet, cat: 'external',
-    desc: "Keynotes, panels, workshops, and speaker content from Product School's own conferences. Proprietary content no competitor can access. Speaker insights that validate or challenge existing atoms get fast-tracked.",
-    tags: ['External', 'Proprietary'] },
-  { id: 's8', label: 'LinkedIn & Social', sub: '3-5 relevant/week', color: COLORS.violet, cat: 'external',
-    desc: 'High-engagement posts (500+ reactions) from PM and AI thought leaders. Surfaces trends 2-4 weeks before they appear in newsletters. New frameworks, contrarian takes, real-world case studies. High noise but extremely current signal.',
-    tags: ['External', 'Trend Detection'] },
-  { id: 's9', label: 'Substack & Blogs', sub: '2-3 articles/week', color: COLORS.violet, cat: 'external',
-    desc: 'Long-form analysis from independent PM and AI thinkers: Stratechery, Pragmatic Engineer, and emerging AI-focused PM publications. Higher quality than LinkedIn, lower frequency. Often provides the depth needed to promote signals from speculative to emerging.',
-    tags: ['External', 'Deep Analysis'] },
-  { id: 's10', label: 'Reddit & Communities', sub: '1-2 threads/week', color: COLORS.violet, cat: 'external',
-    desc: 'r/ProductManagement, r/artificial, r/MachineLearning. Practitioner discussions, real-world challenges, tool comparisons, and failure stories. Reveals pain points that polished publications miss. Valuable for identifying what confuses PMs in the field.',
-    tags: ['External', 'Practitioner Signal'] },
-];
+  const topY = 10;
+  const botY = H - 30;
+  const usableH = botY - topY;
 
-const libraryNodes = [
-  { id: 'l1', label: 'Concepts', sub: 'Canonical definitions', color: COLORS.blue,
-    desc: "Named ideas with canonical definitions and version history. Examples: 'Deterministic vs. Probabilistic Software', 'Trust \u2260 Accuracy', 'Comprehension Debt', 'Confidence UX'. The building blocks of knowledge that all courses share. Each concept has one canonical definition in the library; courses adapt depth, not definition.",
-    tags: ['Atom Type', '120+ identified'] },
-  { id: 'l2', label: 'Frameworks', sub: 'Reusable models', color: COLORS.blue,
-    desc: "Reusable mental models with structure, scoring criteria, and adaptation guidance. Examples: '5 AI Value Archetypes', 'Agent Spectrum', 'Data Flywheel', 'Eval Stack', '8 Moats'. The tools students apply to their own products. If someone's artifact looks exactly like the template, that's a smell.",
-    tags: ['Atom Type', 'Cross-course'] },
-  { id: 'l3', label: 'Evidence', sub: 'Case studies & stats', color: COLORS.blue,
-    desc: "Case studies, data points, statistics, and real-world examples with source attribution and recency metadata. Examples: 'Klarna Automator overcorrection', 'Jasper vs. ChatGPT encroachment', '73% of vibe-coded apps fail to reach production'. Every claim traces back to its source.",
-    tags: ['Atom Type', 'Source-verified'] },
-  { id: 'l4', label: 'Signals', sub: 'Emerging insights', color: COLORS.blue,
-    desc: "Raw or lightly processed external inputs with extracted insights. Podcast transcript excerpts, LinkedIn posts, research findings. Processed through quality gates (Relevance, Novelty, Credibility, Actionability) before any course can use them. Most start at Speculative confidence.",
-    tags: ['Atom Type', 'Quality-gated'] },
-];
+  // Source nodes
+  const internalSrcs = sources.filter(s => s.group === 'internal');
+  const externalSrcs = sources.filter(s => s.group === 'external');
+  const srcGap = 18;
+  const intH = usableH * 0.46;
+  const extH = usableH * 0.46;
+  const intTop = topY;
+  const extTop = intTop + intH + srcGap;
 
-const outputs = [
-  { id: 'o1', label: '9 Certifications', sub: 'Always current', color: COLORS.emerald, cat: 'courses',
-    desc: 'All nine Product School certifications draw from the shared library: Product Management, GTM, Product Experimentation, AI PM, Vibe Coding, AI Evals, Advanced AI Agents, Product Leadership, AI Product Strategy. When an atom is updated, every course that references it gets fresher content automatically.',
-    tags: ['Courses', '9 Programs'] },
-  { id: 'o2', label: 'Enterprise Workshops', sub: 'Custom composition', color: COLORS.orange, cat: 'enterprise',
-    desc: 'Personalized programs composed from library atoms. Enterprise customers get custom topic combinations tailored to their industry, role level, and strategic priorities. Content freshness metadata lets them verify every element is current. Modular, not monolithic.',
-    tags: ['Enterprise', 'Revenue Driver'] },
-  { id: 'o3', label: 'Enterprise Presentations', sub: 'Source-attributed', color: COLORS.orange, cat: 'enterprise',
-    desc: 'Board-ready materials, executive briefings, and custom slide decks with the latest frameworks, stats, and case studies pulled directly from the library. Every claim is source-attributed. Every stat carries a freshness date.',
-    tags: ['Enterprise', 'Board-Ready'] },
-  { id: 'o4', label: "Carlos's Podcast", sub: 'Always fresh material', color: COLORS.pink, cat: 'thought-leadership',
-    desc: "Talking points, frameworks, case studies, and provocative takes sourced from the library for Carlos's podcast and guest appearances. The library ensures Carlos always has the freshest, most validated material. No more scrambling for recent examples.",
-    tags: ['Thought Leadership', 'CEO Voice'] },
-  { id: 'o5', label: 'Blog Posts & Articles', sub: 'Brand authority', color: COLORS.pink, cat: 'thought-leadership',
-    desc: 'Long-form thought leadership content built from validated atoms. Every article backed by the same rigor as the certifications. The library makes content creation faster: authors compose from verified atoms instead of researching from scratch.',
-    tags: ['Thought Leadership', 'Content Marketing'] },
-  { id: 'o6', label: 'LinkedIn & Social', sub: 'Engagement driver', color: COLORS.pink, cat: 'thought-leadership',
-    desc: 'Frameworks, stats, and provocations formatted for social media. Short-form content that drives engagement and funnels audiences to certifications and enterprise programs. Consistent with what is taught in courses because it comes from the same source.',
-    tags: ['Thought Leadership', 'Social'] },
-  { id: 'o7', label: 'Speaker Materials', sub: 'Consistent voice', color: COLORS.pink, cat: 'thought-leadership',
-    desc: 'Conference talks, keynote decks, and panel preparation materials. All Product School speakers pull from the same verified library, ensuring consistent messaging. No more different speakers citing different (or outdated) stats for the same concept.',
-    tags: ['Thought Leadership', 'Events'] },
-  { id: 'o8', label: 'Newsletter & Email', sub: 'Community engagement', color: COLORS.pink, cat: 'thought-leadership',
-    desc: 'Regular updates to the Product School community with the latest frameworks, case studies, and insights. Content that keeps the community engaged between cohorts. Sourced from the library so it never conflicts with what is taught in class.',
-    tags: ['Thought Leadership', 'Community'] },
-];
+  const srcNodeX = srcColX + srcColW - 12;
 
-let nodes = [];
-let connections = [];
-let particles = [];
-let feedbackParticles = [];
-let feedbackPath = [];
+  allNodes = [];
 
-function layoutNodes() {
-  const pad = 40;
-  const leftX = pad + 100;
-  const rightX = W - pad - 100;
-  const centerX = W / 2;
-  const topY = 30;
-  const bottomY = H - 50;
-
-  const srcSpacing = Math.min(48, (bottomY - topY - 40) / (sources.length - 1));
-  const srcStartY = topY + (bottomY - topY - srcSpacing * (sources.length - 1)) / 2;
-
-  const outSpacing = Math.min(52, (bottomY - topY - 40) / (outputs.length - 1));
-  const outStartY = topY + (bottomY - topY - outSpacing * (outputs.length - 1)) / 2;
-
-  const libSpacing = 64;
-  const libStartY = (topY + bottomY) / 2 - (libSpacing * (libraryNodes.length - 1)) / 2;
-
-  nodes = [];
-
-  sources.forEach((s, i) => {
-    nodes.push({ ...s, x: leftX, y: srcStartY + i * srcSpacing, r: 8, type: 'source' });
+  internalSrcs.forEach((s, i) => {
+    const spacing = intH / (internalSrcs.length + 1);
+    allNodes.push({ ...s, x: srcNodeX, y: intTop + spacing * (i + 1), r: 6, type: 'source' });
+  });
+  externalSrcs.forEach((s, i) => {
+    const spacing = extH / (externalSrcs.length + 1);
+    allNodes.push({ ...s, x: srcNodeX, y: extTop + spacing * (i + 1), r: 6, type: 'source' });
   });
 
-  libraryNodes.forEach((l, i) => {
-    nodes.push({ ...l, x: centerX, y: libStartY + i * libSpacing, r: 14, type: 'library' });
+  // Library nodes
+  const libTop = topY + 20;
+  const libBot = botY - 20;
+  const libNodeSpacing = (libBot - libTop - 120) / (libAtoms.length - 1);
+  const libNodeStartY = libTop + 80;
+
+  libAtoms.forEach((l, i) => {
+    allNodes.push({ ...l, x: libCX, y: libNodeStartY + i * libNodeSpacing, r: 12, type: 'library' });
   });
 
-  outputs.forEach((o, i) => {
-    nodes.push({ ...o, x: rightX, y: outStartY + i * outSpacing, r: 8, type: 'output' });
+  // Output nodes
+  const certOuts = outputs.filter(o => o.group === 'certifications');
+  const entOuts = outputs.filter(o => o.group === 'enterprise');
+  const tlOuts = outputs.filter(o => o.group === 'thought-leadership');
+  const outNodeX = outColX + 12;
+  const outGap = 12;
+
+  const certH = usableH * 0.12;
+  const entH = usableH * 0.20;
+  const tlH = usableH * 0.55;
+  const certTop = topY;
+  const entTop = certTop + certH + outGap;
+  const tlTop = entTop + entH + outGap;
+
+  certOuts.forEach((o, i) => {
+    const spacing = certH / (certOuts.length + 1);
+    allNodes.push({ ...o, x: outNodeX, y: certTop + spacing * (i + 1), r: 6, type: 'output' });
+  });
+  entOuts.forEach((o, i) => {
+    const spacing = entH / (entOuts.length + 1);
+    allNodes.push({ ...o, x: outNodeX, y: entTop + spacing * (i + 1), r: 6, type: 'output' });
+  });
+  tlOuts.forEach((o, i) => {
+    const spacing = tlH / (tlOuts.length + 1);
+    allNodes.push({ ...o, x: outNodeX, y: tlTop + spacing * (i + 1), r: 6, type: 'output' });
   });
 
-  connections = [];
-  const srcNodes = nodes.filter(n => n.type === 'source');
-  const libNodes = nodes.filter(n => n.type === 'library');
-  const outNodes = nodes.filter(n => n.type === 'output');
-
-  srcNodes.forEach(s => {
-    const target = libNodes[Math.floor(Math.random() * libNodes.length)];
-    connections.push({ from: s, to: target, type: 'in' });
-  });
-
-  outNodes.forEach(o => {
-    const source = libNodes[Math.floor(Math.random() * libNodes.length)];
-    connections.push({ from: source, to: o, type: 'out' });
-  });
-
-  // Feedback loop: sweeps from outputs down, across bottom, and back up to sources
-  const fbY = bottomY + 25;
-  feedbackPath = [
-    { x: rightX, y: outStartY + (outputs.length - 1) * outSpacing },
-    { x: rightX + 50, y: fbY },
-    { x: W * 0.65, y: fbY + 20 },
-    { x: centerX, y: fbY + 25 },
-    { x: W * 0.35, y: fbY + 20 },
-    { x: leftX - 50, y: fbY },
-    { x: leftX, y: srcStartY + (sources.length - 1) * srcSpacing },
-  ];
+  // Store layout info for drawing frames and trunks
+  layout = {
+    srcColX, srcColW, outColX, outColW,
+    libLeft, libRight, libCX, libW,
+    libTop, libBot,
+    topY, botY,
+    srcNodeX, outNodeX,
+    intTop, intBot: intTop + intH,
+    extTop, extBot: extTop + extH,
+    certTop, certBot: certTop + certH,
+    entTop, entBot: entTop + entH,
+    tlTop, tlBot: tlTop + tlH,
+    trunkInX: libLeft,
+    trunkOutX: libRight,
+    trunkMidY: (libTop + libBot) / 2,
+  };
 
   initParticles();
 }
 
+// Particles
+let inTrunkParticles = [];
+let outTrunkParticles = [];
+let feedbackParticles = [];
+let sourceLineParticles = [];
+let outputLineParticles = [];
+
 function initParticles() {
-  particles = [];
-  connections.forEach((conn, ci) => {
-    const count = 2 + Math.floor(Math.random() * 2);
-    for (let i = 0; i < count; i++) {
-      particles.push({
-        conn: ci,
-        t: Math.random(),
-        speed: 0.0004 + Math.random() * 0.0006,
-        size: 1.5 + Math.random() * 1.5,
-        alpha: 0.4 + Math.random() * 0.5,
-      });
-    }
-  });
+  const srcNodes = allNodes.filter(n => n.type === 'source');
+  const outNodes = allNodes.filter(n => n.type === 'output');
+
+  sourceLineParticles = srcNodes.map(() => ({
+    t: Math.random(),
+    speed: 0.0003 + Math.random() * 0.0003,
+    size: 1.5 + Math.random(),
+    alpha: 0.5 + Math.random() * 0.3,
+  }));
+
+  inTrunkParticles = [];
+  for (let i = 0; i < 4; i++) {
+    inTrunkParticles.push({
+      t: i / 4,
+      speed: 0.0004 + Math.random() * 0.0003,
+      size: 2.5 + Math.random(),
+      alpha: 0.5 + Math.random() * 0.4,
+    });
+  }
+
+  outTrunkParticles = [];
+  for (let i = 0; i < 4; i++) {
+    outTrunkParticles.push({
+      t: i / 4,
+      speed: 0.0004 + Math.random() * 0.0003,
+      size: 2.5 + Math.random(),
+      alpha: 0.5 + Math.random() * 0.4,
+    });
+  }
+
+  outputLineParticles = outNodes.map(() => ({
+    t: Math.random(),
+    speed: 0.0003 + Math.random() * 0.0003,
+    size: 1.5 + Math.random(),
+    alpha: 0.5 + Math.random() * 0.3,
+  }));
 
   feedbackParticles = [];
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 5; i++) {
     feedbackParticles.push({
-      t: i / 6,
-      speed: 0.0003 + Math.random() * 0.0004,
-      size: 2 + Math.random() * 1.5,
-      alpha: 0.5 + Math.random() * 0.4,
+      t: i / 5,
+      speed: 0.0003 + Math.random() * 0.0002,
+      size: 2 + Math.random(),
+      alpha: 0.4 + Math.random() * 0.4,
     });
   }
 }
 
-function lerp(a, b, t) { return a + (b - a) * t; }
-
-function catmullRom(pts, t) {
-  const n = pts.length - 1;
-  const seg = Math.min(Math.floor(t * n), n - 1);
-  const lt = (t * n) - seg;
-
-  const p0 = pts[Math.max(seg - 1, 0)];
-  const p1 = pts[seg];
-  const p2 = pts[Math.min(seg + 1, n)];
-  const p3 = pts[Math.min(seg + 2, n)];
-
-  const t2 = lt * lt;
-  const t3 = t2 * lt;
-
-  return {
-    x: 0.5 * ((2*p1.x) + (-p0.x+p2.x)*lt + (2*p0.x-5*p1.x+4*p2.x-p3.x)*t2 + (-p0.x+3*p1.x-3*p2.x+p3.x)*t3),
-    y: 0.5 * ((2*p1.y) + (-p0.y+p2.y)*lt + (2*p0.y-5*p1.y+4*p2.y-p3.y)*t2 + (-p0.y+3*p1.y-3*p2.y+p3.y)*t3),
-  };
-}
-
-function getConnectionPoint(conn, t) {
-  const f = conn.from;
-  const to = conn.to;
-  const midX = (f.x + to.x) / 2;
-  const pts = [
-    { x: f.x, y: f.y },
-    { x: midX, y: f.y + (to.y - f.y) * 0.15 },
-    { x: midX, y: to.y - (to.y - f.y) * 0.15 },
-    { x: to.x, y: to.y },
-  ];
-  return catmullRom(pts, t);
-}
-
-function getFeedbackPoint(t) {
-  return catmullRom(feedbackPath, t);
-}
-
-function hexToRgb(hex) {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `${r},${g},${b}`;
-}
-
-function drawConnection(conn, alpha) {
-  const steps = 40;
+function roundRect(x, y, w, h, r) {
   ctx.beginPath();
-  for (let i = 0; i <= steps; i++) {
-    const p = getConnectionPoint(conn, i / steps);
-    if (i === 0) ctx.moveTo(p.x, p.y);
-    else ctx.lineTo(p.x, p.y);
-  }
-  const color = conn.type === 'in' ? COLORS.cyan : COLORS.emerald;
-  ctx.strokeStyle = `rgba(${hexToRgb(color)}, ${0.06 * alpha})`;
+  ctx.roundRect(x, y, w, h, r);
+}
+
+function drawGroupFrame(x, y, w, h, label, accentColor, r) {
+  r = r || 10;
+  const rgb = hexToRgb(accentColor);
+  roundRect(x, y, w, h, r);
+  ctx.fillStyle = `rgba(${rgb}, 0.03)`;
+  ctx.fill();
+  ctx.strokeStyle = `rgba(${rgb}, 0.2)`;
   ctx.lineWidth = 1;
   ctx.stroke();
+
+  // Accent left bar
+  ctx.fillStyle = `rgba(${rgb}, 0.4)`;
+  ctx.beginPath();
+  ctx.roundRect(x, y + 8, 3, h - 16, 2);
+  ctx.fill();
+
+  // Label
+  ctx.font = '700 9px -apple-system, system-ui, sans-serif';
+  ctx.fillStyle = `rgba(${rgb}, 0.6)`;
+  ctx.textAlign = 'left';
+  ctx.fillText(label, x + 10, y + 14);
 }
 
-function drawFeedbackCurve() {
-  const steps = 60;
-  ctx.beginPath();
-  for (let i = 0; i <= steps; i++) {
-    const p = getFeedbackPoint(i / steps);
-    if (i === 0) ctx.moveTo(p.x, p.y);
-    else ctx.lineTo(p.x, p.y);
-  }
-  ctx.strokeStyle = `rgba(${hexToRgb(COLORS.amber)}, 0.12)`;
-  ctx.lineWidth = 1.5;
-  ctx.setLineDash([6, 4]);
+function drawOutputGroupFrame(x, y, w, h, label, accentColor, r) {
+  r = r || 10;
+  const rgb = hexToRgb(accentColor);
+  roundRect(x, y, w, h, r);
+  ctx.fillStyle = `rgba(${rgb}, 0.03)`;
+  ctx.fill();
+  ctx.strokeStyle = `rgba(${rgb}, 0.2)`;
+  ctx.lineWidth = 1;
   ctx.stroke();
-  ctx.setLineDash([]);
 
-  // Arrow heads at both ends
-  const startP = getFeedbackPoint(0.01);
-  const endP = getFeedbackPoint(0.99);
-  
-  // Label at the bottom center
-  const mid = getFeedbackPoint(0.5);
-  ctx.font = '700 10px -apple-system, system-ui, sans-serif';
-  ctx.fillStyle = `rgba(${hexToRgb(COLORS.amber)}, 0.7)`;
+  // Accent right bar
+  ctx.fillStyle = `rgba(${rgb}, 0.4)`;
+  ctx.beginPath();
+  ctx.roundRect(x + w - 3, y + 8, 3, h - 16, 2);
+  ctx.fill();
+
+  // Label
+  ctx.font = '700 9px -apple-system, system-ui, sans-serif';
+  ctx.fillStyle = `rgba(${rgb}, 0.6)`;
+  ctx.textAlign = 'right';
+  ctx.fillText(label, x + w - 10, y + 14);
+}
+
+function drawLibraryFrame() {
+  const { libLeft, libTop, libBot, libW } = layout;
+  const pad = 10;
+  const fx = libLeft - pad;
+  const fy = libTop;
+  const fw = libW + pad * 2;
+  const fh = libBot - libTop;
+  const rgb = hexToRgb(C.blue);
+
+  // Outer glow
+  const glow = ctx.createRadialGradient(fx + fw/2, fy + fh/2, 10, fx + fw/2, fy + fh/2, Math.max(fw, fh) * 0.8);
+  glow.addColorStop(0, `rgba(${rgb}, 0.05)`);
+  glow.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(fx - 80, fy - 80, fw + 160, fh + 160);
+
+  // Container
+  roundRect(fx, fy, fw, fh, 14);
+  ctx.fillStyle = 'rgba(15, 23, 42, 0.55)';
+  ctx.fill();
+  ctx.strokeStyle = `rgba(${rgb}, 0.3)`;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Title
+  ctx.font = '800 14px -apple-system, system-ui, sans-serif';
+  ctx.fillStyle = `rgba(${rgb}, 0.85)`;
   ctx.textAlign = 'center';
-  ctx.fillText('CONTINUOUS FEEDBACK LOOP', mid.x, mid.y + 22);
+  ctx.fillText('LIVING CONTENT LIBRARY', fx + fw/2, fy + 28);
+
+  // Subtitle
   ctx.font = '400 10px -apple-system, system-ui, sans-serif';
-  ctx.fillStyle = `rgba(${hexToRgb(COLORS.amber)}, 0.45)`;
-  ctx.fillText('Outputs generate signal that flows back and enriches sources', mid.x, mid.y + 36);
+  ctx.fillStyle = 'rgba(148, 163, 184, 0.6)';
+  ctx.fillText('Curate \u00b7 Verify \u00b7 Compound', fx + fw/2, fy + 44);
+
+  // Badges at bottom
+  const badgeY = fy + fh - 40;
+  const badges = ['TOOL-AGNOSTIC', 'COURSE-AGNOSTIC'];
+  const totalBadgeW = badges.reduce((sum, b) => {
+    ctx.font = '700 9px -apple-system, system-ui, sans-serif';
+    return sum + ctx.measureText(b).width + 18;
+  }, 0) + 10;
+  let bx = fx + fw/2 - totalBadgeW/2;
+
+  badges.forEach(b => {
+    ctx.font = '700 9px -apple-system, system-ui, sans-serif';
+    const bw = ctx.measureText(b).width + 18;
+    roundRect(bx, badgeY, bw, 22, 5);
+    ctx.fillStyle = `rgba(${rgb}, 0.08)`;
+    ctx.fill();
+    ctx.strokeStyle = `rgba(${rgb}, 0.25)`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = `rgba(${rgb}, 0.75)`;
+    ctx.textAlign = 'center';
+    ctx.fillText(b, bx + bw/2, badgeY + 14.5);
+    bx += bw + 10;
+  });
 }
 
 function drawNode(node) {
-  const isHovered = hoveredNode && hoveredNode.id === node.id;
-  const r = isHovered ? node.r + 3 : node.r;
+  const isHov = hoveredNode && hoveredNode.id === node.id;
+  const r = isHov ? node.r + 2 : node.r;
   const rgb = hexToRgb(node.color);
 
-  // Glow
-  if (isHovered || node.type === 'library') {
+  if (isHov || node.type === 'library') {
     const glow = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, r * 3);
-    glow.addColorStop(0, `rgba(${rgb}, ${isHovered ? 0.25 : 0.1})`);
+    glow.addColorStop(0, `rgba(${rgb}, ${isHov ? 0.3 : 0.12})`);
     glow.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = glow;
     ctx.beginPath();
@@ -503,227 +473,235 @@ function drawNode(node) {
     ctx.fill();
   }
 
-  // Node body
   ctx.beginPath();
   ctx.arc(node.x, node.y, r, 0, Math.PI * 2);
-  ctx.fillStyle = `rgba(${rgb}, ${isHovered ? 0.35 : 0.15})`;
+  ctx.fillStyle = `rgba(${rgb}, ${isHov ? 0.4 : 0.15})`;
   ctx.fill();
-  ctx.strokeStyle = `rgba(${rgb}, ${isHovered ? 1 : 0.6})`;
-  ctx.lineWidth = isHovered ? 2 : 1.5;
+  ctx.strokeStyle = `rgba(${rgb}, ${isHov ? 1 : 0.6})`;
+  ctx.lineWidth = isHov ? 2 : 1.5;
   ctx.stroke();
 
-  // Inner dot
   ctx.beginPath();
   ctx.arc(node.x, node.y, r * 0.35, 0, Math.PI * 2);
   ctx.fillStyle = node.color;
   ctx.fill();
 
-  // Label
-  ctx.font = `${isHovered ? '700' : '600'} 11px -apple-system, system-ui, sans-serif`;
-  ctx.fillStyle = isHovered ? node.color : `rgba(${hexToRgb(COLORS.blue)}, 0)`;
+  const labelColor = isHov ? node.color : 'rgba(226,232,240,0.85)';
+  const subColor = isHov ? `rgba(${rgb},0.8)` : 'rgba(148,163,184,0.55)';
 
   if (node.type === 'source') {
+    ctx.font = `${isHov ? '700' : '600'} 11px -apple-system, system-ui, sans-serif`;
     ctx.textAlign = 'right';
-    ctx.fillStyle = isHovered ? node.color : 'rgba(226,232,240,0.85)';
-    ctx.fillText(node.label, node.x - r - 10, node.y + 1);
+    ctx.fillStyle = labelColor;
+    ctx.fillText(node.label, node.x - r - 8, node.y + 1);
     ctx.font = '400 9px -apple-system, system-ui, sans-serif';
-    ctx.fillStyle = isHovered ? `rgba(${rgb}, 0.8)` : 'rgba(148,163,184,0.6)';
-    ctx.fillText(node.sub, node.x - r - 10, node.y + 13);
+    ctx.fillStyle = subColor;
+    ctx.fillText(node.sub, node.x - r - 8, node.y + 13);
   } else if (node.type === 'output') {
+    ctx.font = `${isHov ? '700' : '600'} 11px -apple-system, system-ui, sans-serif`;
     ctx.textAlign = 'left';
-    ctx.fillStyle = isHovered ? node.color : 'rgba(226,232,240,0.85)';
-    ctx.fillText(node.label, node.x + r + 10, node.y + 1);
+    ctx.fillStyle = labelColor;
+    ctx.fillText(node.label, node.x + r + 8, node.y + 1);
     ctx.font = '400 9px -apple-system, system-ui, sans-serif';
-    ctx.fillStyle = isHovered ? `rgba(${rgb}, 0.8)` : 'rgba(148,163,184,0.6)';
-    ctx.fillText(node.sub, node.x + r + 10, node.y + 13);
+    ctx.fillStyle = subColor;
+    ctx.fillText(node.sub, node.x + r + 8, node.y + 13);
   } else {
+    ctx.font = `${isHov ? '700' : '600'} 12px -apple-system, system-ui, sans-serif`;
     ctx.textAlign = 'center';
-    ctx.fillStyle = isHovered ? node.color : 'rgba(226,232,240,0.9)';
-    ctx.font = `${isHovered ? '700' : '600'} 12px -apple-system, system-ui, sans-serif`;
-    ctx.fillText(node.label, node.x, node.y - r - 10);
-    ctx.font = '400 10px -apple-system, system-ui, sans-serif';
-    ctx.fillStyle = isHovered ? `rgba(${rgb}, 0.8)` : 'rgba(148,163,184,0.7)';
-    ctx.fillText(node.sub, node.x, node.y - r + 2);
+    ctx.fillStyle = labelColor;
+    ctx.fillText(node.label, node.x, node.y - 2);
+    ctx.font = '400 9px -apple-system, system-ui, sans-serif';
+    ctx.fillStyle = subColor;
+    ctx.fillText(node.sub, node.x, node.y + 12);
   }
 }
 
-function drawLibraryFrame() {
-  const libNodes = nodes.filter(n => n.type === 'library');
-  if (!libNodes.length) return;
-
-  const cx = libNodes[0].x;
-  const topY = Math.min(...libNodes.map(n => n.y));
-  const botY = Math.max(...libNodes.map(n => n.y));
-  const padX = 90;
-  const padTop = 70;
-  const padBot = 50;
-
-  const fx = cx - padX;
-  const fy = topY - padTop;
-  const fw = padX * 2;
-  const fh = (botY - topY) + padTop + padBot;
-  const r = 16;
-
-  // Outer glow
-  const glow = ctx.createRadialGradient(cx, topY + (botY - topY) / 2, 10, cx, topY + (botY - topY) / 2, Math.max(fw, fh));
-  glow.addColorStop(0, 'rgba(59, 130, 246, 0.06)');
-  glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
-  ctx.fillStyle = glow;
-  ctx.fillRect(fx - 60, fy - 60, fw + 120, fh + 120);
-
-  // Container background
+function drawParticle(x, y, size, color, alpha) {
+  const rgb = hexToRgb(color);
   ctx.beginPath();
-  ctx.roundRect(fx, fy, fw, fh, r);
-  ctx.fillStyle = 'rgba(15, 23, 42, 0.5)';
+  ctx.arc(x, y, size, 0, Math.PI * 2);
+  ctx.fillStyle = `rgba(${rgb}, ${alpha})`;
   ctx.fill();
-  ctx.strokeStyle = 'rgba(59, 130, 246, 0.25)';
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
-
-  // Subtle inner border for depth
+  const g = ctx.createRadialGradient(x, y, 0, x, y, size * 3.5);
+  g.addColorStop(0, `rgba(${rgb}, ${alpha * 0.3})`);
+  g.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = g;
   ctx.beginPath();
-  ctx.roundRect(fx + 1, fy + 1, fw - 2, fh - 2, r - 1);
-  ctx.strokeStyle = 'rgba(59, 130, 246, 0.06)';
-  ctx.lineWidth = 1;
-  ctx.stroke();
-
-  // Title
-  ctx.font = '800 13px -apple-system, system-ui, sans-serif';
-  ctx.fillStyle = 'rgba(59, 130, 246, 0.8)';
-  ctx.textAlign = 'center';
-  ctx.fillText('LIVING CONTENT LIBRARY', cx, fy + 24);
-
-  // Subtitle
-  ctx.font = '400 10px -apple-system, system-ui, sans-serif';
-  ctx.fillStyle = 'rgba(148, 163, 184, 0.6)';
-  ctx.fillText('Curate \u00b7 Verify \u00b7 Compound', cx, fy + 40);
-
-  // Tool-agnostic badge
-  const badgeText = 'TOOL-AGNOSTIC';
-  ctx.font = '700 9px -apple-system, system-ui, sans-serif';
-  const bw = ctx.measureText(badgeText).width + 16;
-  const bh = 20;
-  const bx = cx - bw / 2;
-  const by = botY + 24;
-  ctx.beginPath();
-  ctx.roundRect(bx, by, bw, bh, 4);
-  ctx.fillStyle = 'rgba(59, 130, 246, 0.1)';
+  ctx.arc(x, y, size * 3.5, 0, Math.PI * 2);
   ctx.fill();
-  ctx.strokeStyle = 'rgba(59, 130, 246, 0.3)';
-  ctx.lineWidth = 1;
-  ctx.stroke();
-  ctx.fillStyle = 'rgba(59, 130, 246, 0.8)';
-  ctx.textAlign = 'center';
-  ctx.fillText(badgeText, cx, by + 13.5);
-
-  // Course-agnostic badge below
-  const badge2Text = 'COURSE-AGNOSTIC';
-  ctx.font = '700 9px -apple-system, system-ui, sans-serif';
-  const b2w = ctx.measureText(badge2Text).width + 16;
-  const b2x = cx - b2w / 2;
-  const b2y = by + bh + 6;
-  ctx.beginPath();
-  ctx.roundRect(b2x, b2y, b2w, bh, 4);
-  ctx.fillStyle = 'rgba(59, 130, 246, 0.1)';
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(59, 130, 246, 0.3)';
-  ctx.lineWidth = 1;
-  ctx.stroke();
-  ctx.fillStyle = 'rgba(59, 130, 246, 0.8)';
-  ctx.textAlign = 'center';
-  ctx.fillText(badge2Text, cx, b2y + 13.5);
 }
 
-function drawColumnLabels() {
-  const srcNodes = nodes.filter(n => n.type === 'source');
-  const outNodes = nodes.filter(n => n.type === 'output');
+function drawTrunkLine(x1, y1, x2, y2, color, width) {
+  const rgb = hexToRgb(color);
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.strokeStyle = `rgba(${rgb}, 0.12)`;
+  ctx.lineWidth = width || 2;
+  ctx.stroke();
+}
 
-  ctx.font = '700 10px -apple-system, system-ui, sans-serif';
-  ctx.textAlign = 'center';
-
-  if (srcNodes.length) {
-    ctx.fillStyle = `rgba(${hexToRgb(COLORS.cyan)}, 0.5)`;
-    ctx.fillText('SIGNAL SOURCES', srcNodes[0].x, srcNodes[0].y - 36);
-  }
-
-  if (outNodes.length) {
-    ctx.fillStyle = `rgba(${hexToRgb(COLORS.emerald)}, 0.5)`;
-    ctx.fillText('CONTENT OUTPUTS', outNodes[0].x, outNodes[0].y - 36);
-  }
+function drawBranchLine(x1, y1, x2, y2, color) {
+  const rgb = hexToRgb(color);
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  const midX = (x1 + x2) / 2;
+  ctx.bezierCurveTo(midX, y1, midX, y2, x2, y2);
+  ctx.strokeStyle = `rgba(${rgb}, 0.08)`;
+  ctx.lineWidth = 1;
+  ctx.stroke();
 }
 
 function draw() {
   ctx.clearRect(0, 0, W, H);
+  const L = layout;
+  const srcNodes = allNodes.filter(n => n.type === 'source');
+  const outNodes = allNodes.filter(n => n.type === 'output');
+  const libNodes = allNodes.filter(n => n.type === 'library');
 
-  // Library container frame (behind everything)
+  // -- Source group frames --
+  drawGroupFrame(L.srcColX, L.intTop, L.srcColW, L.intBot - L.intTop, 'INTERNAL', C.cyan);
+  drawGroupFrame(L.srcColX, L.extTop, L.srcColW, L.extBot - L.extTop, 'EXTERNAL', C.violet);
+
+  // -- Output group frames --
+  drawOutputGroupFrame(L.outColX, L.certTop, L.outColW, L.certBot - L.certTop, 'CERTIFICATIONS', C.emerald);
+  drawOutputGroupFrame(L.outColX, L.entTop, L.outColW, L.entBot - L.entTop, 'ENTERPRISE', C.orange);
+  drawOutputGroupFrame(L.outColX, L.tlTop, L.outColW, L.tlBot - L.tlTop, 'THOUGHT LEADERSHIP', C.pink);
+
+  // -- Library frame --
   drawLibraryFrame();
 
-  // Connections
-  connections.forEach(c => drawConnection(c, 1));
+  // -- Trunk lines --
+  // Convergence point (left of library)
+  const convX = L.trunkInX + 5;
+  const convY = L.trunkMidY;
+  // Fan-out point (right of library)
+  const fanX = L.trunkOutX - 5;
+  const fanY = L.trunkMidY;
 
-  // Feedback curve
-  drawFeedbackCurve();
-
-  // Particles on connections
-  particles.forEach(p => {
-    p.t += p.speed;
-    if (p.t > 1) p.t -= 1;
-    const conn = connections[p.conn];
-    const pos = getConnectionPoint(conn, p.t);
-    const color = conn.type === 'in' ? COLORS.cyan : COLORS.emerald;
-    const rgb = hexToRgb(color);
-
-    ctx.beginPath();
-    ctx.arc(pos.x, pos.y, p.size, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(${rgb}, ${p.alpha * (0.5 + 0.5 * Math.sin(p.t * Math.PI * 2))})`;
-    ctx.fill();
-
-    // Particle glow
-    const pg = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, p.size * 4);
-    pg.addColorStop(0, `rgba(${rgb}, 0.15)`);
-    pg.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = pg;
-    ctx.beginPath();
-    ctx.arc(pos.x, pos.y, p.size * 4, 0, Math.PI * 2);
-    ctx.fill();
+  // Source branches → convergence point
+  srcNodes.forEach(n => {
+    drawBranchLine(n.x, n.y, convX, convY, n.color);
   });
 
-  // Feedback particles
+  // Trunk: convergence → library center
+  drawTrunkLine(convX, convY, L.libCX, convY, C.blue, 2.5);
+
+  // Trunk: library center → fan-out
+  drawTrunkLine(L.libCX, fanY, fanX, fanY, C.blue, 2.5);
+
+  // Fan-out → output branches
+  outNodes.forEach(n => {
+    drawBranchLine(fanX, fanY, n.x, n.y, n.color);
+  });
+
+  // -- Feedback loop (outputs → library bottom) --
+  const fbStartX = fanX;
+  const fbStartY = fanY;
+  const fbEndX = L.libCX;
+  const fbEndY = L.libBot - 30;
+  const fbBotY = L.botY + 15;
+
+  ctx.beginPath();
+  ctx.moveTo(fbStartX + 20, fbStartY);
+  ctx.bezierCurveTo(
+    fbStartX + 60, fbStartY,
+    fbStartX + 60, fbBotY,
+    fbEndX + 80, fbBotY
+  );
+  ctx.bezierCurveTo(
+    fbEndX - 80, fbBotY,
+    fbEndX - 40, fbBotY,
+    fbEndX, fbEndY
+  );
+  ctx.strokeStyle = `rgba(${hexToRgb(C.amber)}, 0.15)`;
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([6, 5]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Feedback label
+  const fbLabelX = (fbStartX + fbEndX) / 2 + 20;
+  ctx.font = '700 9px -apple-system, system-ui, sans-serif';
+  ctx.fillStyle = `rgba(${hexToRgb(C.amber)}, 0.6)`;
+  ctx.textAlign = 'center';
+  ctx.fillText('CONTINUOUS FEEDBACK LOOP', fbLabelX, fbBotY + 14);
+  ctx.font = '400 9px -apple-system, system-ui, sans-serif';
+  ctx.fillStyle = `rgba(${hexToRgb(C.amber)}, 0.35)`;
+  ctx.fillText('Outputs generate signal that enriches the library', fbLabelX, fbBotY + 26);
+
+  // -- Particles on source branches --
+  srcNodes.forEach((n, i) => {
+    const p = sourceLineParticles[i];
+    if (!p) return;
+    p.t += p.speed;
+    if (p.t > 1) p.t -= 1;
+    const t = p.t;
+    const midX = (n.x + convX) / 2;
+    const bx = (1-t)*(1-t)*(1-t)*n.x + 3*(1-t)*(1-t)*t*midX + 3*(1-t)*t*t*midX + t*t*t*convX;
+    const by = (1-t)*(1-t)*(1-t)*n.y + 3*(1-t)*(1-t)*t*n.y + 3*(1-t)*t*t*convY + t*t*t*convY;
+    drawParticle(bx, by, p.size, n.color, p.alpha * (0.4 + 0.6 * Math.sin(t * Math.PI)));
+  });
+
+  // -- Particles on input trunk --
+  inTrunkParticles.forEach(p => {
+    p.t += p.speed;
+    if (p.t > 1) p.t -= 1;
+    const x = convX + (L.libCX - convX) * p.t;
+    drawParticle(x, convY, p.size, C.blue, p.alpha * (0.3 + 0.7 * Math.sin(p.t * Math.PI)));
+  });
+
+  // -- Particles on output trunk --
+  outTrunkParticles.forEach(p => {
+    p.t += p.speed;
+    if (p.t > 1) p.t -= 1;
+    const x = L.libCX + (fanX - L.libCX) * p.t;
+    drawParticle(x, fanY, p.size, C.blue, p.alpha * (0.3 + 0.7 * Math.sin(p.t * Math.PI)));
+  });
+
+  // -- Particles on output branches --
+  outNodes.forEach((n, i) => {
+    const p = outputLineParticles[i];
+    if (!p) return;
+    p.t += p.speed;
+    if (p.t > 1) p.t -= 1;
+    const t = p.t;
+    const midX = (fanX + n.x) / 2;
+    const bx = (1-t)*(1-t)*(1-t)*fanX + 3*(1-t)*(1-t)*t*midX + 3*(1-t)*t*t*midX + t*t*t*n.x;
+    const by = (1-t)*(1-t)*(1-t)*fanY + 3*(1-t)*(1-t)*t*fanY + 3*(1-t)*t*t*n.y + t*t*t*n.y;
+    drawParticle(bx, by, p.size, n.color, p.alpha * (0.4 + 0.6 * Math.sin(t * Math.PI)));
+  });
+
+  // -- Feedback particles --
   feedbackParticles.forEach(p => {
     p.t += p.speed;
     if (p.t > 1) p.t -= 1;
-    const pos = getFeedbackPoint(p.t);
-    const rgb = hexToRgb(COLORS.amber);
-
-    ctx.beginPath();
-    ctx.arc(pos.x, pos.y, p.size, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(${rgb}, ${p.alpha * (0.5 + 0.5 * Math.sin(p.t * Math.PI * 4))})`;
-    ctx.fill();
-
-    const pg = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, p.size * 3);
-    pg.addColorStop(0, `rgba(${rgb}, 0.2)`);
-    pg.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = pg;
-    ctx.beginPath();
-    ctx.arc(pos.x, pos.y, p.size * 3, 0, Math.PI * 2);
-    ctx.fill();
+    const t = p.t;
+    // Approximate bezier path: right side → bottom → back up to library bottom
+    let px, py;
+    if (t < 0.5) {
+      const lt = t * 2;
+      px = fbStartX + 20 + (fbEndX + 80 - fbStartX - 20) * lt * 0.5;
+      py = fbStartY + (fbBotY - fbStartY) * Math.sin(lt * Math.PI * 0.5);
+    } else {
+      const lt = (t - 0.5) * 2;
+      px = (fbEndX + 80) - ((fbEndX + 80) - fbEndX) * lt;
+      py = fbBotY - (fbBotY - fbEndY) * Math.sin(lt * Math.PI * 0.5);
+    }
+    drawParticle(px, py, p.size, C.amber, p.alpha * (0.3 + 0.5 * Math.sin(t * Math.PI * 2)));
   });
 
-  // Column labels
-  drawColumnLabels();
+  // -- Draw nodes --
+  allNodes.forEach(n => drawNode(n));
 
-  // Nodes
-  nodes.forEach(n => drawNode(n));
-
-  animFrame = requestAnimationFrame(draw);
+  requestAnimationFrame(draw);
 }
 
 // Interaction
 function getNodeAt(mx, my) {
-  for (let i = nodes.length - 1; i >= 0; i--) {
-    const n = nodes[i];
-    const d = Math.sqrt((mx - n.x) ** 2 + (my - n.y) ** 2);
-    if (d < n.r + 12) return n;
+  for (let i = allNodes.length - 1; i >= 0; i--) {
+    const n = allNodes[i];
+    if (Math.sqrt((mx - n.x) ** 2 + (my - n.y) ** 2) < n.r + 14) return n;
   }
   return null;
 }
@@ -734,10 +712,7 @@ const htSub = document.getElementById('htSub');
 
 canvas.addEventListener('mousemove', (e) => {
   const rect = canvas.getBoundingClientRect();
-  const mx = e.clientX - rect.left;
-  const my = e.clientY - rect.top;
-  const node = getNodeAt(mx, my);
-
+  const node = getNodeAt(e.clientX - rect.left, e.clientY - rect.top);
   if (node) {
     hoveredNode = node;
     canvas.style.cursor = 'pointer';
@@ -745,9 +720,8 @@ canvas.addEventListener('mousemove', (e) => {
     htSub.textContent = 'Click to explore';
     tip.classList.add('visible');
     const tx = e.clientX + 16;
-    const ty = e.clientY - 10;
     tip.style.left = (tx + tip.offsetWidth > window.innerWidth ? e.clientX - tip.offsetWidth - 8 : tx) + 'px';
-    tip.style.top = ty + 'px';
+    tip.style.top = (e.clientY - 10) + 'px';
   } else {
     hoveredNode = null;
     canvas.style.cursor = 'default';
@@ -755,66 +729,44 @@ canvas.addEventListener('mousemove', (e) => {
   }
 });
 
-canvas.addEventListener('mouseleave', () => {
-  hoveredNode = null;
-  tip.classList.remove('visible');
-});
+canvas.addEventListener('mouseleave', () => { hoveredNode = null; tip.classList.remove('visible'); });
 
 const panel = document.getElementById('detailPanel');
-const dpCat = document.getElementById('dpCategory');
-const dpTitle = document.getElementById('dpTitle');
-const dpDesc = document.getElementById('dpDesc');
-const dpMeta = document.getElementById('dpMeta');
-
 canvas.addEventListener('click', (e) => {
   const rect = canvas.getBoundingClientRect();
-  const mx = e.clientX - rect.left;
-  const my = e.clientY - rect.top;
-  const node = getNodeAt(mx, my);
-
+  const node = getNodeAt(e.clientX - rect.left, e.clientY - rect.top);
   if (node) {
-    let catLabel = '';
-    let catColor = node.color;
-    if (node.type === 'source') catLabel = node.cat === 'internal' ? 'Internal Source' : 'External Source';
-    else if (node.type === 'library') catLabel = 'Content Atom Type';
-    else {
-      catLabel = node.cat === 'courses' ? 'Certifications' : node.cat === 'enterprise' ? 'Enterprise Output' : 'Thought Leadership';
-    }
+    let cat = '';
+    if (node.type === 'source') cat = node.group === 'internal' ? 'Internal Source' : 'External Source';
+    else if (node.type === 'library') cat = 'Content Atom Type';
+    else cat = node.group === 'certifications' ? 'Certifications' : node.group === 'enterprise' ? 'Enterprise Output' : 'Thought Leadership';
 
-    dpCat.textContent = catLabel;
-    dpCat.style.color = node.color;
-    dpTitle.textContent = node.label;
-    dpDesc.textContent = node.desc;
+    document.getElementById('dpCategory').textContent = cat;
+    document.getElementById('dpCategory').style.color = node.color;
+    document.getElementById('dpTitle').textContent = node.label;
+    document.getElementById('dpDesc').textContent = node.desc;
 
-    dpMeta.innerHTML = '';
-    if (node.tags) {
-      node.tags.forEach(tag => {
-        const el = document.createElement('span');
-        el.className = 'dp-tag';
-        el.textContent = tag;
-        el.style.background = `rgba(${hexToRgb(node.color)}, 0.15)`;
-        el.style.color = node.color;
-        dpMeta.appendChild(el);
-      });
-    }
-
+    const meta = document.getElementById('dpMeta');
+    meta.innerHTML = '';
+    (node.tags || []).forEach(tag => {
+      const el = document.createElement('span');
+      el.className = 'dp-tag';
+      el.textContent = tag;
+      el.style.background = `rgba(${hexToRgb(node.color)}, 0.15)`;
+      el.style.color = node.color;
+      meta.appendChild(el);
+    });
     panel.classList.add('open');
     tip.classList.remove('visible');
   }
 });
 
-document.getElementById('closePanel').addEventListener('click', () => {
-  panel.classList.remove('open');
-});
-
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') panel.classList.remove('open');
-});
+document.getElementById('closePanel').addEventListener('click', () => panel.classList.remove('open'));
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') panel.classList.remove('open'); });
 
 window.addEventListener('resize', resize);
 resize();
 draw();
 </script>
-
 </body>
 </html>
