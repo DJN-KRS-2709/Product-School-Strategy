@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product School — Living Content Library: Strategy Pitch</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  :root {
+    --bg: #06080f;
+    --surface: #0d1321;
+    --surface2: #131b2e;
+    --border: rgba(51, 65, 85, 0.4);
+    --text: #e2e8f0;
+    --text-muted: #94a3b8;
+    --text-dim: #475569;
+    --cyan: #22d3ee;
+    --blue: #3b82f6;
+    --emerald: #34d399;
+    --amber: #fbbf24;
+    --violet: #a78bfa;
+    --orange: #fb923c;
+    --pink: #f472b6;
+    --red: #f87171;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .deck {
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px 100px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    pointer-events: none;
+    overflow-y: auto;
+  }
+  .slide.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+  }
+
+  .slide-number {
+    position: fixed;
+    bottom: 24px;
+    right: 40px;
+    font-size: 12px;
+    color: var(--text-dim);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    z-index: 100;
+  }
+
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--cyan), var(--blue));
+    transition: width 0.4s ease;
+    z-index: 100;
+  }
+
+  .nav-hint {
+    position: fixed;
+    bottom: 24px;
+    left: 40px;
+    font-size: 11px;
+    color: var(--text-dim);
+    z-index: 100;
+    opacity: 0.6;
+  }
+
+  /* Typography */
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .eyebrow.cyan { color: var(--cyan); }
+  .eyebrow.blue { color: var(--blue); }
+  .eyebrow.emerald { color: var(--emerald); }
+  .eyebrow.amber { color: var(--amber); }
+  .eyebrow.violet { color: var(--violet); }
+  .eyebrow.orange { color: var(--orange); }
+  .eyebrow.pink { color: var(--pink); }
+  .eyebrow.red { color: var(--red); }
+
+  h1 {
+    font-size: clamp(36px, 4.5vw, 64px);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 24px;
+    letter-spacing: -0.03em;
+  }
+  h1 .gradient {
+    background: linear-gradient(135deg, var(--cyan), var(--blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  h2 {
+    font-size: clamp(28px, 3vw, 44px);
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 20px;
+    letter-spacing: -0.02em;
+  }
+
+  h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .subtitle {
+    font-size: clamp(16px, 1.8vw, 22px);
+    color: var(--text-muted);
+    line-height: 1.5;
+    max-width: 700px;
+    font-weight: 400;
+  }
+
+  .big-quote {
+    font-size: clamp(20px, 2.5vw, 32px);
+    font-weight: 600;
+    font-style: italic;
+    color: var(--text-muted);
+    line-height: 1.4;
+    max-width: 750px;
+    border-left: 3px solid var(--blue);
+    padding-left: 24px;
+    margin-bottom: 20px;
+  }
+  .quote-source {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-dim);
+    font-style: normal;
+  }
+
+  /* Cards / Grids */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 24px;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-top: 24px;
+  }
+  .grid-4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 14px;
+    margin-top: 24px;
+  }
+  .grid-5 {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .card .card-icon {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  .card h4 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .card p {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .card.accent-cyan { border-color: rgba(34,211,238,0.25); }
+  .card.accent-blue { border-color: rgba(59,130,246,0.25); }
+  .card.accent-emerald { border-color: rgba(52,211,153,0.25); }
+  .card.accent-amber { border-color: rgba(251,191,36,0.25); }
+  .card.accent-violet { border-color: rgba(167,139,250,0.25); }
+  .card.accent-orange { border-color: rgba(251,146,60,0.25); }
+  .card.accent-pink { border-color: rgba(244,114,182,0.25); }
+
+  /* Problem list */
+  .problem-list {
+    list-style: none;
+    margin-top: 20px;
+  }
+  .problem-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(51,65,85,0.2);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .problem-list .num {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .problem-list .num.red {
+    background: rgba(248,113,113,0.12);
+    color: var(--red);
+  }
+
+  /* Flow diagram */
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 28px 0;
+    justify-content: center;
+  }
+  .flow-box {
+    padding: 14px 22px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    min-width: 120px;
+  }
+  .flow-arrow {
+    font-size: 20px;
+    color: var(--text-dim);
+    margin: 0 6px;
+  }
+
+  /* Table */
+  .deck-table {
+    width: 100%;
+    margin-top: 16px;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .deck-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--border);
+  }
+  .deck-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(51,65,85,0.15);
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+  .deck-table tr:last-child td { border-bottom: none; }
+
+  /* Stat block */
+  .stat-row {
+    display: flex;
+    gap: 40px;
+    margin-top: 32px;
+  }
+  .stat-block .stat-value {
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+  .stat-block .stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    font-weight: 500;
+  }
+
+  /* Timeline */
+  .timeline {
+    display: flex;
+    gap: 0;
+    margin-top: 24px;
+    position: relative;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    top: 18px;
+    left: 20px;
+    right: 20px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--red), var(--amber), var(--emerald));
+    z-index: 0;
+  }
+  .phase {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+  .phase-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin: 12px auto 12px;
+  }
+  .phase-title {
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .phase-time {
+    font-size: 10px;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+  .phase-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    line-height: 1.4;
+  }
+
+  /* Loop diagram */
+  .loop-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 28px;
+  }
+  .loop-node {
+    padding: 14px 20px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    min-width: 130px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .loop-arrow-right {
+    font-size: 22px;
+    color: var(--emerald);
+  }
+
+  /* Badge */
+  .badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .badge.blue { background: rgba(59,130,246,0.12); color: var(--blue); }
+  .badge.emerald { background: rgba(52,211,153,0.12); color: var(--emerald); }
+
+  /* Slide-specific */
+  .title-slide { justify-content: center; }
+  .title-slide .meta {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 24px;
+    font-weight: 500;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+
+  .highlight {
+    color: var(--cyan);
+    font-weight: 700;
+  }
+
+  .stakeholder-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 14px;
+  }
+  .stakeholder-box h4 {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .stakeholder-box p {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.55;
+    font-style: italic;
+  }
+
+  .metric-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 20px;
+  }
+  .metric-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .metric-card .metric-val {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .metric-card .metric-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+
+<div class="deck">
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="slide-number" id="slideNumber"></div>
+  <div class="nav-hint">← → or click to navigate</div>
+
+  <!-- SLIDE 0: Title -->
+  <div class="slide title-slide" data-slide="0">
+    <div class="eyebrow cyan">Product School — Strategy Pitch</div>
+    <h1>The <span class="gradient">Living Content Library</span></h1>
+    <p class="subtitle">A course-agnostic knowledge layer that compounds in quality with every cohort, every customer interaction, and every external signal captured.</p>
+    <p class="meta">Dejan Krstic, Chief Product &amp; Technology Officer &nbsp;·&nbsp; April 2026</p>
+  </div>
+
+  <!-- SLIDE 1: The Thesis -->
+  <div class="slide" data-slide="1">
+    <div class="eyebrow blue">The Thesis</div>
+    <h2>Content ages faster than courses can be rewritten.</h2>
+    <p class="subtitle" style="margin-bottom:32px;">Product School's nine certifications share a single structural problem. The solution is not to rewrite faster — it is to change the unit of content from <em>course</em> to <em>concept</em>.</p>
+    <div class="stat-row">
+      <div class="stat-block">
+        <div class="stat-value" style="color:var(--cyan)">9</div>
+        <div class="stat-label">Certifications</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-value" style="color:var(--red)">9</div>
+        <div class="stat-label">Content silos</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-value" style="color:var(--amber)">0</div>
+        <div class="stat-label">Shared knowledge layer</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: The Problem -->
+  <div class="slide" data-slide="2">
+    <div class="eyebrow red">The Diagnosis</div>
+    <h2>Five structural problems</h2>
+    <ul class="problem-list">
+      <li><span class="num red">1</span><div><strong>Framework drift.</strong> The same concept is taught differently across courses. Agent Spectrum has two incompatible definitions. No canonical source of truth.</div></li>
+      <li><span class="num red">2</span><div><strong>Content staleness.</strong> AI capabilities change weekly. No mechanism propagates an update across the other eight certifications that reference the same concept.</div></li>
+      <li><span class="num red">3</span><div><strong>Feedback silos.</strong> Three Vibe Coding cohorts drove a full redesign — but none of that signal reached AI Agents or AI for PMs, where topics overlap.</div></li>
+      <li><span class="num red">4</span><div><strong>Duplication of effort.</strong> The Vibe Coding redesign found 55–60% content reuse — but discovery took manual archaeology. Every new course repeats this.</div></li>
+      <li><span class="num red">5</span><div><strong>Ad-hoc external signal.</strong> Lenny insights, LinkedIn frameworks, podcast transcripts — curated by individuals, benefiting exactly one course.</div></li>
+    </ul>
+  </div>
+
+  <!-- SLIDE 3: Root Cause -->
+  <div class="slide" data-slide="3">
+    <div class="eyebrow amber">Root Cause</div>
+    <h2>The unit of content management is the course, when it should be the concept.</h2>
+    <p class="subtitle" style="margin-bottom:32px;">Just as the old AI Prototyping course "tried to teach a tool" when it should have been "teaching a process," our content operations try to maintain courses when they should be maintaining knowledge.</p>
+    <div class="flow-row">
+      <div class="flow-box" style="background:rgba(248,113,113,0.1); border:1px solid rgba(248,113,113,0.3); color:var(--red);">Manage Courses</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box" style="background:rgba(52,211,153,0.1); border:1px solid rgba(52,211,153,0.3); color:var(--emerald);">Manage Knowledge</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: The Strategy Framework -->
+  <div class="slide" data-slide="4">
+    <div class="eyebrow blue">The Strategy — Six Questions</div>
+    <h2>We use the same framework we teach.</h2>
+    <p class="subtitle" style="margin-bottom:20px;">The AI Product Strategy certification structures every AI bet through six sequential questions. This strategy follows the same discipline.</p>
+    <div class="flow-row" style="flex-wrap:wrap;">
+      <div class="flow-box" style="background:rgba(34,211,238,0.1); border:1px solid rgba(34,211,238,0.3); color:var(--cyan); font-size:11px;">THE BET<br><span style="font-weight:400;font-size:10px;color:var(--text-dim)">What to build</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box" style="background:rgba(167,139,250,0.1); border:1px solid rgba(167,139,250,0.3); color:var(--violet); font-size:11px;">THE MOAT<br><span style="font-weight:400;font-size:10px;color:var(--text-dim)">Why it compounds</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box" style="background:rgba(52,211,153,0.1); border:1px solid rgba(52,211,153,0.3); color:var(--emerald); font-size:11px;">THE MARGIN<br><span style="font-weight:400;font-size:10px;color:var(--text-dim)">What it unlocks</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box" style="background:rgba(251,191,36,0.1); border:1px solid rgba(251,191,36,0.3); color:var(--amber); font-size:11px;">THE CONTRACT<br><span style="font-weight:400;font-size:10px;color:var(--text-dim)">How we trust it</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box" style="background:rgba(251,146,60,0.1); border:1px solid rgba(251,146,60,0.3); color:var(--orange); font-size:11px;">THE GUARDRAILS<br><span style="font-weight:400;font-size:10px;color:var(--text-dim)">What breaks at scale</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box" style="background:rgba(244,114,182,0.1); border:1px solid rgba(244,114,182,0.3); color:var(--pink); font-size:11px;">THE PITCH<br><span style="font-weight:400;font-size:10px;color:var(--text-dim)">How it gets funded</span></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: The Bet -->
+  <div class="slide" data-slide="5">
+    <div class="eyebrow cyan">Q1 — The Bet</div>
+    <div class="big-quote">"You can't predict which AI feature wins. Stop pretending you can."<div class="quote-source">— AI Product Strategy, M1</div></div>
+    <h2>Build a course-agnostic content library.</h2>
+    <p class="subtitle">Every teachable concept, framework, case study, and insight is stored as an independent, reusable <strong style="color:var(--cyan)">content atom</strong>. Courses consume atoms. Feedback enriches atoms. The library is the product; courses are the distribution channels.</p>
+  </div>
+
+  <!-- SLIDE 6: Content Atoms -->
+  <div class="slide" data-slide="6">
+    <div class="eyebrow cyan">Q1 — The Bet</div>
+    <h2>The content atom</h2>
+    <p class="subtitle" style="margin-bottom:8px;">The smallest unit of teachable knowledge that can exist independently of any specific course.</p>
+    <div class="grid-4">
+      <div class="card accent-cyan">
+        <div class="card-icon">◆</div>
+        <h4 style="color:var(--cyan)">Concept</h4>
+        <p>A named idea with a canonical definition, context, and version history. E.g. "Confidence UX" — three tiers making probabilistic output legible.</p>
+      </div>
+      <div class="card accent-blue">
+        <div class="card-icon">▲</div>
+        <h4 style="color:var(--blue)">Framework</h4>
+        <p>A reusable mental model with structure and application guidance. E.g. "5 AI Value Archetypes" — each with margin profile and governance burden.</p>
+      </div>
+      <div class="card accent-emerald">
+        <div class="card-icon">●</div>
+        <h4 style="color:var(--emerald)">Evidence</h4>
+        <p>A case study, data point, or real-world example with source attribution and recency. E.g. "Klarna Automator overcorrection" — 3-act case study.</p>
+      </div>
+      <div class="card accent-amber">
+        <div class="card-icon">⚡</div>
+        <h4 style="color:var(--amber)">Signal</h4>
+        <p>A raw external input — podcast excerpt, LinkedIn post, research finding — with extracted insight. E.g. Gokul Rajaram on brand moats, 20VC March 2026.</p>
+      </div>
+    </div>
+    <div style="margin-top:16px; display:flex; gap:10px;">
+      <span class="badge blue">TOOL-AGNOSTIC</span>
+      <span class="badge blue">COURSE-AGNOSTIC</span>
+      <span class="badge emerald">METADATA-RICH</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: The Moat -->
+  <div class="slide" data-slide="7">
+    <div class="eyebrow violet">Q2 — The Moat</div>
+    <div class="big-quote">"Your data is not your moat. Your workflow is."<div class="quote-source">— AI Product Strategy, M2</div></div>
+    <h2>Three compounding loops</h2>
+    <p class="subtitle" style="margin-bottom:8px;">A shared content library is table-stakes. The moat is the compounding loops that make it more valuable with every interaction.</p>
+    <div class="grid-3">
+      <div class="card accent-cyan">
+        <h4 style="color:var(--cyan)">Loop 1: Cohort Feedback → Atom Refinement</h4>
+        <p>Every cohort generates signal: surveys, in-class questions, instructor adaptations. Signal routes to atoms. When 3 cohorts flag a concept, it gets enriched — and every referencing course benefits.</p>
+      </div>
+      <div class="card accent-violet">
+        <h4 style="color:var(--violet)">Loop 2: External Signal → New Atoms</h4>
+        <p>Lenny publishes on AI pricing. Gokul defines 8 Moats. A LinkedIn post goes viral. Systematic ingestion turns individual research into institutional knowledge across all 9 courses.</p>
+      </div>
+      <div class="card accent-emerald">
+        <h4 style="color:var(--emerald)">Loop 3: Cross-Course Citation → Authority</h4>
+        <p>Atoms referenced by 5+ courses are foundationally important. Citation count becomes a natural priority signal for maintenance, verification, and depth of treatment.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: The Margin -->
+  <div class="slide" data-slide="8">
+    <div class="eyebrow emerald">Q3 — The Margin</div>
+    <div class="big-quote">"AI will compress your margins before it expands them."<div class="quote-source">— AI Product Strategy, M3</div></div>
+    <h2>Efficiency gains</h2>
+    <table class="deck-table">
+      <thead>
+        <tr><th>Cost Driver</th><th>Today (Siloed)</th><th>Library Model</th><th>Gain</th></tr>
+      </thead>
+      <tbody>
+        <tr><td style="color:var(--text);font-weight:600;">New course creation</td><td>Start from scratch or manual audit</td><td>Compose from existing atoms</td><td style="color:var(--emerald);font-weight:700;">40–60% faster</td></tr>
+        <tr><td style="color:var(--text);font-weight:600;">Content updates</td><td>Each author independently monitors</td><td>Update once, propagate to N courses</td><td style="color:var(--emerald);font-weight:700;">Linear → constant</td></tr>
+        <tr><td style="color:var(--text);font-weight:600;">External research</td><td>One person, one course</td><td>Centralized pipeline, all 9 benefit</td><td style="color:var(--emerald);font-weight:700;">9× leverage</td></tr>
+        <tr><td style="color:var(--text);font-weight:600;">Feedback processing</td><td>Course-specific meeting notes</td><td>Routes to atoms, cross-course patterns</td><td style="color:var(--emerald);font-weight:700;">Systemic fixes</td></tr>
+        <tr><td style="color:var(--text);font-weight:600;">Quality assurance</td><td>No cross-course consistency checks</td><td>Canonical definitions prevent drift</td><td style="color:var(--emerald);font-weight:700;">Structural</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SLIDE 9: The Contract -->
+  <div class="slide" data-slide="9">
+    <div class="eyebrow amber">Q4 — The Contract</div>
+    <div class="big-quote">"95% accuracy with no audit trail loses to 85% accuracy with one."<div class="quote-source">— AI Product Strategy, M4</div></div>
+    <h2>Freshness SLAs &amp; Confidence Scoring</h2>
+    <div class="two-col" style="margin-top:20px;">
+      <div>
+        <h3>Verification SLAs</h3>
+        <table class="deck-table">
+          <thead><tr><th>Atom Type</th><th>SLA</th></tr></thead>
+          <tbody>
+            <tr><td style="color:var(--text);font-weight:600;">Concept</td><td>Every 180 days</td></tr>
+            <tr><td style="color:var(--text);font-weight:600;">Framework</td><td>Every 180 days</td></tr>
+            <tr><td style="color:var(--text);font-weight:600;">Evidence</td><td>Every 90 days</td></tr>
+            <tr><td style="color:var(--text);font-weight:600;">Signal</td><td>Every 60 days</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h3>Confidence Tiers</h3>
+        <div class="card accent-emerald" style="margin-bottom:10px;">
+          <h4 style="color:var(--emerald);">Validated</h4>
+          <p>Multiple sources, taught in cohort, positive student signal. Use directly.</p>
+        </div>
+        <div class="card accent-amber" style="margin-bottom:10px;">
+          <h4 style="color:var(--amber);">Emerging</h4>
+          <p>Single credible source, not yet classroom-tested. Use with context.</p>
+        </div>
+        <div class="card accent-orange">
+          <h4 style="color:var(--orange);">Speculative</h4>
+          <p>Signal only — trending, unverified. Do not use without escalation.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: The Guardrails -->
+  <div class="slide" data-slide="10">
+    <div class="eyebrow orange">Q5 — The Guardrails</div>
+    <div class="big-quote">"Your governance framework is a sales asset, not a compliance burden."<div class="quote-source">— AI Product Strategy, M5</div></div>
+    <h2>Content governance model</h2>
+    <div class="grid-3" style="margin-top:16px;">
+      <div class="card">
+        <h4>Who creates atoms?</h4>
+        <p style="color:var(--emerald);font-weight:600;margin-bottom:4px;">Anyone</p>
+        <p>Course authors, instructors, content team, CPTO. Low barrier ensures the library captures signal from everywhere.</p>
+      </div>
+      <div class="card">
+        <h4>Who promotes to Validated?</h4>
+        <p style="color:var(--amber);font-weight:600;margin-bottom:4px;">Content leads</p>
+        <p>Requires source verification, peer review, and a decision on which courses should reference the atom.</p>
+      </div>
+      <div class="card">
+        <h4>Who deprecates?</h4>
+        <p style="color:var(--orange);font-weight:600;margin-bottom:4px;">CPTO + course leads jointly</p>
+        <p>Deprecated atoms are archived, not deleted — retaining full history and rationale.</p>
+      </div>
+    </div>
+    <div style="margin-top:20px;">
+      <h3>External Signal Quality Gates</h3>
+      <div class="flow-row" style="font-size:11px; flex-wrap:wrap;">
+        <div class="flow-box" style="background:var(--surface); border:1px solid var(--border); font-size:11px; min-width:100px;">Raw Signal</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="background:var(--surface); border:1px solid var(--border); font-size:11px; min-width:100px;">Extraction</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="background:var(--surface); border:1px solid var(--border); font-size:11px; min-width:100px;">Source Eval</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="background:var(--surface); border:1px solid var(--border); font-size:11px; min-width:100px;">Relevance</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="background:var(--surface); border:1px solid var(--border); font-size:11px; min-width:100px;">Atom Created</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="background:var(--surface); border:1px solid var(--border); font-size:11px; min-width:100px;">Curation Review</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: The Pitch -->
+  <div class="slide" data-slide="11">
+    <div class="eyebrow pink">Q6 — The Pitch</div>
+    <div class="big-quote">"The roadmap is an output, not your job description."<div class="quote-source">— AI Product Strategy, M6</div></div>
+    <h2>The narrative for each stakeholder</h2>
+    <div class="grid-2" style="margin-top:12px;">
+      <div class="stakeholder-box" style="border-color:rgba(34,211,238,0.25);">
+        <h4 style="color:var(--cyan);">CEO &amp; Board</h4>
+        <p>"We are building a system where a single update propagates across all nine certifications instantly. Within 12 months, our content freshness will be a measurable competitive advantage no competitor can replicate."</p>
+      </div>
+      <div class="stakeholder-box" style="border-color:rgba(52,211,153,0.25);">
+        <h4 style="color:var(--emerald);">Instructors</h4>
+        <p>"You will never teach stale content again. Before each cohort, you see exactly which atoms updated. Your in-class observations feed back — you are contributors to a living system."</p>
+      </div>
+      <div class="stakeholder-box" style="border-color:rgba(251,146,60,0.25);">
+        <h4 style="color:var(--orange);">Enterprise Customers</h4>
+        <p>"Our curriculum is a living knowledge system. Every concept carries a verification date, source attribution, and confidence level. We can show you exactly when each element was last validated."</p>
+      </div>
+      <div class="stakeholder-box" style="border-color:rgba(167,139,250,0.25);">
+        <h4 style="color:var(--violet);">Content Team</h4>
+        <p>"You build atoms, not courses. Your work reaches all nine certifications. When you research a topic, that research compounds across the entire portfolio. Your impact is multiplicative."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: Implementation — Confidence Line -->
+  <div class="slide" data-slide="12">
+    <div class="eyebrow blue">Implementation</div>
+    <h2>The Confidence Line</h2>
+    <p class="subtitle" style="margin-bottom:8px;">From the Vibe Coding certification: every initiative starts in ambiguity and moves toward confidence.</p>
+    <div class="timeline">
+      <div class="phase">
+        <div class="phase-dot" style="background:var(--red);"></div>
+        <div class="phase-title" style="color:var(--red);">Foundation</div>
+        <div class="phase-time">Weeks 1–3</div>
+        <div class="phase-desc">Repo structure, atom schema, seed library from 4 courses</div>
+      </div>
+      <div class="phase">
+        <div class="phase-dot" style="background:var(--orange);"></div>
+        <div class="phase-title" style="color:var(--orange);">Ingestion</div>
+        <div class="phase-time">Weeks 3–6</div>
+        <div class="phase-desc">External source pipelines, feedback routing, quality gates</div>
+      </div>
+      <div class="phase">
+        <div class="phase-dot" style="background:var(--amber);"></div>
+        <div class="phase-title" style="color:var(--amber);">Wiring</div>
+        <div class="phase-time">Weeks 6–10</div>
+        <div class="phase-desc">First 2 courses reference library atoms, canonical top-20</div>
+      </div>
+      <div class="phase">
+        <div class="phase-dot" style="background:var(--emerald);"></div>
+        <div class="phase-title" style="color:var(--emerald);">Curation</div>
+        <div class="phase-time">Weeks 10–14</div>
+        <div class="phase-desc">Formal roles, freshness SLAs, enterprise dashboard</div>
+      </div>
+      <div class="phase">
+        <div class="phase-dot" style="background:var(--cyan);"></div>
+        <div class="phase-title" style="color:var(--cyan);">Compounding</div>
+        <div class="phase-time">Weeks 14–20</div>
+        <div class="phase-desc">Cross-course impact analysis, feedback analytics, AI ingestion</div>
+      </div>
+      <div class="phase">
+        <div class="phase-dot" style="background:var(--blue);"></div>
+        <div class="phase-title" style="color:var(--blue);">Ecosystem</div>
+        <div class="phase-time">Weeks 20–30</div>
+        <div class="phase-desc">All 9 certs wired, instructor workflows, enterprise co-creation</div>
+      </div>
+    </div>
+    <div class="flow-row" style="margin-top:20px; font-size:12px;">
+      <div style="color:var(--red); font-weight:600;">High Ambiguity</div>
+      <div style="flex:1; height:2px; background:linear-gradient(90deg,var(--red),var(--amber),var(--emerald),var(--blue)); margin:0 16px; border-radius:2px;"></div>
+      <div style="color:var(--blue); font-weight:600;">Production Confidence</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: Metrics -->
+  <div class="slide" data-slide="13">
+    <div class="eyebrow emerald">Metrics</div>
+    <h2>How we know it's working</h2>
+    <div class="two-col" style="margin-top:16px;">
+      <div>
+        <h3>Leading Indicators</h3>
+        <div class="metric-grid">
+          <div class="metric-card">
+            <div class="metric-val" style="color:var(--emerald);">90%+</div>
+            <div class="metric-label">Atoms within freshness SLA</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-val" style="color:var(--cyan);">15+</div>
+            <div class="metric-label">New atoms per week</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-val" style="color:var(--violet);">2.5+</div>
+            <div class="metric-label">Avg. courses per atom</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-val" style="color:var(--amber);">80%+</div>
+            <div class="metric-label">Feedback-to-atom routing</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3>Lagging Indicators</h3>
+        <div class="metric-grid">
+          <div class="metric-card">
+            <div class="metric-val" style="color:var(--emerald);">↑</div>
+            <div class="metric-label">Student NPS trend (library courses vs. siloed)</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-val" style="color:var(--cyan);">40%</div>
+            <div class="metric-label">Reduction in new cert creation time</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-val" style="color:var(--amber);">&lt;5%</div>
+            <div class="metric-label">Definitional variance for canonical concepts</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-val" style="color:var(--violet);">30%+</div>
+            <div class="metric-label">Instructor prep time reduction</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 14: Closing -->
+  <div class="slide title-slide" data-slide="14">
+    <div class="eyebrow cyan">The Compounding System</div>
+    <h1>We build the library.<br>The library builds the courses.<br>The courses <span class="gradient">build the library.</span></h1>
+    <p class="subtitle">Product School's weapon is a living content library that gets sharper with every cohort, every signal, every feedback loop.</p>
+    <p class="meta" style="margin-top:32px; color:var(--text-dim);">
+      <a href="living-content-library-system.html" style="color:var(--cyan); text-decoration:none; font-weight:600;">View Interactive System Diagram →</a>
+    </p>
+  </div>
+
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+const bar = document.getElementById('progressBar');
+const num = document.getElementById('slideNumber');
+
+function show(i) {
+  if (i < 0 || i >= total) return;
+  slides[current].classList.remove('active');
+  current = i;
+  slides[current].classList.add('active');
+  bar.style.width = ((current + 1) / total * 100) + '%';
+  num.textContent = (current + 1) + ' / ' + total;
+}
+
+show(0);
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'ArrowDown') { e.preventDefault(); show(current + 1); }
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); show(current - 1); }
+  if (e.key === 'Home') { e.preventDefault(); show(0); }
+  if (e.key === 'End') { e.preventDefault(); show(total - 1); }
+});
+
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 50) { dx < 0 ? show(current + 1) : show(current - 1); }
+});
+
+document.addEventListener('click', e => {
+  if (e.target.closest('a')) return;
+  const x = e.clientX / window.innerWidth;
+  x > 0.5 ? show(current + 1) : show(current - 1);
+});
+</script>
+
+</body>
+</html>
