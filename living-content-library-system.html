@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product School — Living Content Library System</title>
+<style>
+  :root {
+    --bg: #0a0e17;
+    --surface: #111827;
+    --surface-2: #1a2234;
+    --border: #1e293b;
+    --border-active: #3b82f6;
+    --text: #e2e8f0;
+    --text-muted: #94a3b8;
+    --text-dim: #64748b;
+    --accent-blue: #3b82f6;
+    --accent-cyan: #06b6d4;
+    --accent-emerald: #10b981;
+    --accent-amber: #f59e0b;
+    --accent-rose: #f43f5e;
+    --accent-violet: #8b5cf6;
+    --accent-orange: #f97316;
+    --accent-pink: #ec4899;
+    --glow-blue: rgba(59, 130, 246, 0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  .header {
+    text-align: center;
+    padding: 48px 24px 16px;
+  }
+
+  .header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+
+  .header .subtitle {
+    font-size: 14px;
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+
+  .confidence-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin: 24px auto 8px;
+    max-width: 600px;
+    padding: 0 24px;
+  }
+
+  .cl-phase {
+    flex: 1;
+    text-align: center;
+    padding: 10px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+  }
+
+  .cl-phase:first-child {
+    border-radius: 8px 0 0 8px;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(245, 158, 11, 0.15));
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    color: var(--accent-amber);
+  }
+
+  .cl-phase:nth-child(2) {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(6, 182, 212, 0.1));
+    border-top: 1px solid rgba(6, 182, 212, 0.3);
+    border-bottom: 1px solid rgba(6, 182, 212, 0.3);
+    color: var(--accent-cyan);
+  }
+
+  .cl-phase:last-child {
+    border-radius: 0 8px 8px 0;
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(16, 185, 129, 0.15));
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: var(--accent-emerald);
+  }
+
+  .cl-label {
+    font-size: 9px;
+    color: var(--text-dim);
+    margin-top: 4px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .system-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 260px 1fr 260px;
+    grid-template-rows: auto auto;
+    gap: 0;
+    position: relative;
+  }
+
+  .col-header {
+    text-align: center;
+    padding: 12px 0 16px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+
+  .col-header.sources { color: var(--accent-cyan); grid-column: 1; }
+  .col-header.library { color: var(--accent-blue); grid-column: 2; }
+  .col-header.outputs { color: var(--accent-emerald); grid-column: 3; }
+
+  .sources-col {
+    grid-column: 1;
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 1;
+    padding-right: 16px;
+  }
+
+  .source-group-label, .output-group-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    padding: 8px 0 4px 12px;
+  }
+
+  .source-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .source-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    border-radius: 10px 0 0 10px;
+  }
+
+  .source-card.internal::before { background: var(--accent-cyan); }
+  .source-card.external::before { background: var(--accent-violet); }
+
+  .source-card:hover {
+    border-color: var(--border-active);
+    transform: translateX(4px);
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1);
+  }
+
+  .source-card .name { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .source-card .desc { font-size: 10px; color: var(--text-dim); line-height: 1.4; }
+
+  .source-card .badge {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .source-card.internal .badge { background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); }
+  .source-card.external .badge { background: rgba(139, 92, 246, 0.15); color: var(--accent-violet); }
+
+  .library-col {
+    grid-column: 2;
+    grid-row: 2;
+    z-index: 1;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .library-core {
+    background: var(--surface);
+    border: 2px solid var(--accent-blue);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 0 40px var(--glow-blue), inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+
+  .library-core .title {
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 16px;
+    color: var(--accent-blue);
+  }
+
+  .atom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .atom-type {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+    transition: all 0.25s ease;
+    cursor: pointer;
+  }
+
+  .atom-type:hover {
+    border-color: var(--border-active);
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.1);
+  }
+
+  .atom-type .icon { font-size: 24px; margin-bottom: 6px; }
+  .atom-type .label { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+  .atom-type .examples { font-size: 10px; color: var(--text-dim); line-height: 1.4; }
+
+  .library-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+
+  .meta-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+  }
+
+  .meta-card .meta-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+  }
+
+  .meta-card .meta-value { font-size: 18px; font-weight: 800; }
+  .meta-card .meta-sub { font-size: 9px; color: var(--text-dim); margin-top: 2px; }
+  .meta-card:nth-child(1) .meta-value { color: var(--accent-emerald); }
+  .meta-card:nth-child(2) .meta-value { color: var(--accent-amber); }
+  .meta-card:nth-child(3) .meta-value { color: var(--accent-rose); }
+
+  .governance {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+
+  .governance .gov-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--accent-amber);
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .gov-pipeline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .gov-step {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .gov-arrow { color: var(--text-dim); font-size: 12px; }
+
+  .outputs-col {
+    grid-column: 3;
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 1;
+    padding-left: 16px;
+  }
+
+  .output-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .output-card::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    border-radius: 0 10px 10px 0;
+  }
+
+  .output-card.courses::after { background: var(--accent-emerald); }
+  .output-card.enterprise::after { background: var(--accent-orange); }
+  .output-card.content::after { background: var(--accent-pink); }
+
+  .output-card:hover {
+    border-color: var(--border-active);
+    transform: translateX(-4px);
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1);
+  }
+
+  .output-card .name { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .output-card .desc { font-size: 10px; color: var(--text-dim); line-height: 1.4; }
+
+  .output-card .badge {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .output-card.courses .badge { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); }
+  .output-card.enterprise .badge { background: rgba(249, 115, 22, 0.15); color: var(--accent-orange); }
+  .output-card.content .badge { background: rgba(236, 72, 153, 0.15); color: var(--accent-pink); }
+
+  .flow-strip {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: 260px 1fr 260px;
+  }
+
+  .flow-label-left, .flow-label-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 0;
+  }
+
+  .flow-label-left { justify-content: flex-end; padding-right: 16px; }
+  .flow-label-right { padding-left: 16px; }
+
+  .flow-arrow-animated { display: flex; align-items: center; gap: 2px; }
+
+  .flow-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    animation: flowPulse 2s ease-in-out infinite;
+  }
+
+  .flow-dot.in { background: var(--accent-cyan); }
+  .flow-dot.out { background: var(--accent-emerald); }
+  .flow-dot:nth-child(1) { animation-delay: 0s; }
+  .flow-dot:nth-child(2) { animation-delay: 0.3s; }
+  .flow-dot:nth-child(3) { animation-delay: 0.6s; }
+
+  @keyframes flowPulse {
+    0%, 100% { opacity: 0.2; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+
+  .flow-text {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+  }
+
+  .flow-center { display: flex; align-items: center; justify-content: center; }
+
+  .feedback-loop {
+    max-width: 1200px;
+    margin: 24px auto 0;
+    padding: 0 24px;
+  }
+
+  .loop-bar {
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+  }
+
+  .loop-icon {
+    font-size: 20px;
+    animation: spin 4s linear infinite;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .loop-text {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  .loop-text strong { color: var(--accent-amber); }
+
+  .footer {
+    text-align: center;
+    padding: 32px 24px 48px;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .footer .tagline {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    font-style: italic;
+  }
+
+  .tooltip {
+    display: none;
+    position: fixed;
+    background: var(--surface-2);
+    border: 1px solid var(--border-active);
+    border-radius: 10px;
+    padding: 14px 16px;
+    max-width: 280px;
+    z-index: 100;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    pointer-events: none;
+  }
+
+  .tooltip.visible { display: block; }
+  .tooltip .tt-title { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+  .tooltip .tt-body { font-size: 11px; color: var(--text-muted); line-height: 1.5; }
+
+  @media (max-width: 900px) {
+    .system-container {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+    }
+    .col-header.sources, .sources-col { grid-column: 1; }
+    .col-header.library, .library-col { grid-column: 1; }
+    .col-header.outputs, .outputs-col { grid-column: 1; }
+    .sources-col { grid-row: auto; padding-right: 0; }
+    .library-col { grid-row: auto; padding: 16px 0; }
+    .outputs-col { grid-row: auto; padding-left: 0; }
+    .flow-strip { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Product School — Living Content Library</h1>
+  <div class="subtitle">
+    A course-agnostic knowledge layer that compounds with every cohort, every signal, and every feedback loop. Sources flow in. Knowledge compounds. Fresh content flows out.
+  </div>
+  <div class="confidence-line">
+    <div class="cl-phase">High Ambiguity<div class="cl-label">Foundation + Seeding</div></div>
+    <div class="cl-phase">Gaining Clarity<div class="cl-label">Wiring + Curation</div></div>
+    <div class="cl-phase">Production Confidence<div class="cl-label">Compounding + Ecosystem</div></div>
+  </div>
+</div>
+
+<div class="flow-strip">
+  <div class="flow-label-left">
+    <span class="flow-text">Signal In</span>
+    <div class="flow-arrow-animated">
+      <div class="flow-dot in"></div>
+      <div class="flow-dot in"></div>
+      <div class="flow-dot in"></div>
+    </div>
+  </div>
+  <div class="flow-center">
+    <span class="flow-text" style="color: var(--accent-blue);">Curate &middot; Verify &middot; Compound</span>
+  </div>
+  <div class="flow-label-right">
+    <div class="flow-arrow-animated">
+      <div class="flow-dot out"></div>
+      <div class="flow-dot out"></div>
+      <div class="flow-dot out"></div>
+    </div>
+    <span class="flow-text">Content Out</span>
+  </div>
+</div>
+
+<div class="system-container">
+
+  <div class="col-header sources">Signal Sources</div>
+  <div class="sources-col">
+    <div class="source-group-label">Internal</div>
+    <div class="source-card internal" data-tip="Student Surveys" data-desc="Post-cohort satisfaction data, per-module ratings, free-text feedback. Three cohorts of Vibe Coding feedback drove a full course redesign. Now this signal feeds all 9 courses.">
+      <div class="name">Student Surveys</div>
+      <div class="desc">NPS, module ratings, open feedback from every cohort</div>
+      <span class="badge">~50 batches/yr</span>
+    </div>
+    <div class="source-card internal" data-tip="Customer Success" data-desc="Recurring questions, confusion points, topic requests, complaints about outdated material. CS is the closest proxy for what the enterprise market wants next.">
+      <div class="name">Customer Success</div>
+      <div class="desc">CS conversations, enterprise pain points, topic requests</div>
+      <span class="badge">High signal</span>
+    </div>
+    <div class="source-card internal" data-tip="Instructor Observations" data-desc="In-class adaptations, questions revealing confusion, concepts that land well, delivery techniques that improve comprehension. Low volume, highest practical value.">
+      <div class="name">Instructor Observations</div>
+      <div class="desc">Teaching adaptations, student confusion patterns</div>
+      <span class="badge">Per cohort</span>
+    </div>
+    <div class="source-card internal" data-tip="Enterprise Demand" data-desc="What enterprise customers request in custom programs, which topics they prioritize, budget-backed signal about market direction.">
+      <div class="name">Enterprise Demand</div>
+      <div class="desc">Custom program requests, topic priorities from buyers</div>
+      <span class="badge">Revenue signal</span>
+    </div>
+    <div class="source-card internal" data-tip="Cohort Transcripts" data-desc="AI-transcribed class sessions capturing student questions, instructor explanations, lab interactions. AI-assisted extraction of insights mapped to content atoms.">
+      <div class="name">Cohort Transcripts</div>
+      <div class="desc">Session recordings, AI-extracted insights</div>
+      <span class="badge">240+ sessions/yr</span>
+    </div>
+    <div class="source-group-label" style="margin-top: 8px;">External</div>
+    <div class="source-card external" data-tip="Lenny's Newsletter &amp; Podcast" data-desc="PM-focused analysis on AI products, pricing, evals, adoption. Already proven: lenny-insights.md maps 10+ sources to specific modules. Highest-signal external source.">
+      <div class="name">Lenny's Newsletter &amp; Podcast</div>
+      <div class="desc">AI product strategy, pricing, evals, adoption tactics</div>
+      <span class="badge">2-4/month</span>
+    </div>
+    <div class="source-card external" data-tip="Product School Events" data-desc="Keynotes, panels, workshops from Product School's own conferences. Proprietary content no competitor can access. Speaker insights that validate or challenge atoms.">
+      <div class="name">Product School Events</div>
+      <div class="desc">Keynotes, panels, speaker transcripts</div>
+      <span class="badge">Proprietary</span>
+    </div>
+    <div class="source-card external" data-tip="LinkedIn &amp; Social" data-desc="High-engagement posts (500+ reactions) from PM and AI thought leaders. Surfaces trends 2-4 weeks before newsletters. New frameworks, contrarian takes, real-world case studies.">
+      <div class="name">LinkedIn &amp; Social</div>
+      <div class="desc">Trending PM/AI posts, new frameworks, case studies</div>
+      <span class="badge">3-5/week</span>
+    </div>
+    <div class="source-card external" data-tip="Substack &amp; Blogs" data-desc="Long-form analysis from independent thinkers: Stratechery, Pragmatic Engineer, AI-focused PM publications. Higher quality than social, lower frequency.">
+      <div class="name">Substack &amp; Blogs</div>
+      <div class="desc">Stratechery, Pragmatic Engineer, AI PM publications</div>
+      <span class="badge">2-3/week</span>
+    </div>
+    <div class="source-card external" data-tip="Reddit &amp; Communities" data-desc="r/ProductManagement, r/artificial, r/MachineLearning. Practitioner discussions, real-world challenges, failure stories. Reveals pain points formal sources miss.">
+      <div class="name">Reddit &amp; Communities</div>
+      <div class="desc">Practitioner discussions, tool reviews, failure stories</div>
+      <span class="badge">1-2/week</span>
+    </div>
+  </div>
+
+  <div class="col-header library">Living Content Library</div>
+  <div class="library-col">
+    <div class="library-core">
+      <div class="title">Content Atoms</div>
+      <div class="atom-grid">
+        <div class="atom-type" data-tip="Concepts" data-desc="Named ideas with canonical definitions. 'Deterministic vs. Probabilistic Software', 'Trust &#8800; Accuracy', 'Comprehension Debt'. The building blocks of knowledge across all courses.">
+          <div class="icon">&#9670;</div>
+          <div class="label">Concepts</div>
+          <div class="examples">Canonical definitions, mental models, named ideas</div>
+        </div>
+        <div class="atom-type" data-tip="Frameworks" data-desc="Reusable structures with steps, scoring, or rubrics. '5 AI Value Archetypes', 'Agent Spectrum', 'Confidence UX', 'Data Flywheel', 'Eval Stack'. The tools students apply to their own products.">
+          <div class="icon">&#9632;</div>
+          <div class="label">Frameworks</div>
+          <div class="examples">Scoring models, rubrics, structured methods</div>
+        </div>
+        <div class="atom-type" data-tip="Evidence" data-desc="Case studies, stats, real-world examples. 'Klarna Automator overcorrection', 'Jasper vs. ChatGPT encroachment', 'Samsung data leak'. Source-attributed and date-verified.">
+          <div class="icon">&#9679;</div>
+          <div class="label">Evidence</div>
+          <div class="examples">Case studies, stats, real-world stories</div>
+        </div>
+        <div class="atom-type" data-tip="Signals" data-desc="Raw external inputs with extracted insights. Lenny podcast takeaways, Gokul's 8 Moats, LinkedIn viral posts. Processed through quality gates before use in courses.">
+          <div class="icon">&#9651;</div>
+          <div class="label">Signals</div>
+          <div class="examples">External insights, trend data, new research</div>
+        </div>
+      </div>
+    </div>
+    <div class="library-meta">
+      <div class="meta-card">
+        <div class="meta-label">Validated</div>
+        <div class="meta-value">&#10003;</div>
+        <div class="meta-sub">Multi-source, cohort-tested</div>
+      </div>
+      <div class="meta-card">
+        <div class="meta-label">Emerging</div>
+        <div class="meta-value">~</div>
+        <div class="meta-sub">Single source, not yet taught</div>
+      </div>
+      <div class="meta-card">
+        <div class="meta-label">Speculative</div>
+        <div class="meta-value">?</div>
+        <div class="meta-sub">Signal only, needs curation</div>
+      </div>
+    </div>
+    <div class="governance">
+      <div class="gov-title">Quality Pipeline</div>
+      <div class="gov-pipeline">
+        <div class="gov-step">Raw Signal</div>
+        <span class="gov-arrow">&rarr;</span>
+        <div class="gov-step">Extract Insight</div>
+        <span class="gov-arrow">&rarr;</span>
+        <div class="gov-step">Source Check</div>
+        <span class="gov-arrow">&rarr;</span>
+        <div class="gov-step">Relevance Gate</div>
+        <span class="gov-arrow">&rarr;</span>
+        <div class="gov-step">Atom Created</div>
+        <span class="gov-arrow">&rarr;</span>
+        <div class="gov-step">Peer Review</div>
+        <span class="gov-arrow">&rarr;</span>
+        <div class="gov-step" style="border-color: var(--accent-emerald); color: var(--accent-emerald);">Validated</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-header outputs">Content Outputs</div>
+  <div class="outputs-col">
+    <div class="output-group-label">Certifications</div>
+    <div class="output-card courses" data-tip="9 Product School Certifications" data-desc="All nine certifications draw from the shared library: Product Management, GTM, Product Experimentation, AI PM, Vibe Coding, AI Evals, Advanced AI Agents, Product Leadership, AI Product Strategy. Content stays current across all of them.">
+      <div class="name">9 Certifications</div>
+      <div class="desc">AI Product Strategy, Vibe Coding, AI Agents, AI for PMs, Leadership, GTM, Experimentation, AI Evals, PM</div>
+      <span class="badge">Always current</span>
+    </div>
+    <div class="output-group-label" style="margin-top: 4px;">Enterprise</div>
+    <div class="output-card enterprise" data-tip="Custom Enterprise Workshops" data-desc="Personalized programs composed from library atoms. Enterprise customers get custom topic combinations with content freshness metadata they can verify. Modular, not monolithic.">
+      <div class="name">Custom Enterprise Workshops</div>
+      <div class="desc">Personalized programs composed from verified atoms, tailored to client industry and role level</div>
+      <span class="badge">Modular composition</span>
+    </div>
+    <div class="output-card enterprise" data-tip="Enterprise Presentations" data-desc="Board-ready materials, executive briefings, and custom slide decks with the latest frameworks, stats, and case studies. Every claim source-attributed, every stat freshness-dated.">
+      <div class="name">Enterprise Presentations</div>
+      <div class="desc">Board-ready materials, executive briefings, custom decks with verified content</div>
+      <span class="badge">Source-attributed</span>
+    </div>
+    <div class="output-group-label" style="margin-top: 4px;">Thought Leadership</div>
+    <div class="output-card content" data-tip="Podcast Material (Carlos)" data-desc="Talking points, frameworks, case studies, and provocative takes sourced from the library. Carlos always has the freshest material for podcast conversations and guest appearances.">
+      <div class="name">Podcast Material</div>
+      <div class="desc">Talking points, frameworks, provocations for Carlos's podcast and guest appearances</div>
+      <span class="badge">Always fresh</span>
+    </div>
+    <div class="output-card content" data-tip="Blog Posts &amp; Articles" data-desc="Long-form thought leadership content built from validated atoms. Every article backed by the same rigor as the certifications. Compounds the Product School brand.">
+      <div class="name">Blog Posts &amp; Articles</div>
+      <div class="desc">Thought leadership content backed by validated library atoms</div>
+      <span class="badge">Brand authority</span>
+    </div>
+    <div class="output-card content" data-tip="LinkedIn &amp; Social Content" data-desc="Frameworks, stats, and provocations formatted for social. Short-form content that drives engagement and funnels to certifications and enterprise programs.">
+      <div class="name">LinkedIn &amp; Social Content</div>
+      <div class="desc">Frameworks, stats, and provocations formatted for engagement and reach</div>
+      <span class="badge">Engagement driver</span>
+    </div>
+    <div class="output-card content" data-tip="Speaker &amp; Conference Materials" data-desc="Conference talks, keynote decks, panel preparation. Speakers pull from the same verified library, ensuring consistent messaging across all Product School representatives.">
+      <div class="name">Speaker &amp; Conference Materials</div>
+      <div class="desc">Keynotes, panel prep, conference decks for PS speakers</div>
+      <span class="badge">Consistent voice</span>
+    </div>
+    <div class="output-card content" data-tip="Newsletter &amp; Email" data-desc="Regular updates to the Product School community with the latest frameworks, case studies, and insights. Content that keeps the community engaged between cohorts.">
+      <div class="name">Newsletter &amp; Email</div>
+      <div class="desc">Community updates with latest frameworks and insights</div>
+      <span class="badge">Community</span>
+    </div>
+  </div>
+
+</div>
+
+<div class="feedback-loop">
+  <div class="loop-bar">
+    <span class="loop-icon">&#8635;</span>
+    <div class="loop-text">
+      <strong>Compounding Feedback Loop:</strong> Courses generate student feedback &rarr; feedback enriches atoms &rarr; enriched atoms improve all courses &rarr; better courses generate richer feedback. Every cohort makes the library smarter. Every output validates or challenges the library. The system compounds.
+    </div>
+    <span class="loop-icon">&#8635;</span>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="tagline">"We build the library. The library builds the courses. The courses build the library."</div>
+  Product School &mdash; Living Content Library Strategy &mdash; April 2026
+</div>
+
+<div class="tooltip" id="tooltip">
+  <div class="tt-title"></div>
+  <div class="tt-body"></div>
+</div>
+
+<script>
+  const tooltip = document.getElementById('tooltip');
+  document.querySelectorAll('[data-tip]').forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      tooltip.querySelector('.tt-title').textContent = card.getAttribute('data-tip');
+      tooltip.querySelector('.tt-body').textContent = card.getAttribute('data-desc');
+      tooltip.classList.add('visible');
+    });
+    card.addEventListener('mousemove', (e) => {
+      const r = tooltip.getBoundingClientRect();
+      tooltip.style.left = ((e.clientX + 16 + r.width > window.innerWidth) ? e.clientX - r.width - 16 : e.clientX + 16) + 'px';
+      tooltip.style.top = ((e.clientY + 16 + r.height > window.innerHeight) ? e.clientY - r.height - 16 : e.clientY + 16) + 'px';
+    });
+    card.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
+  });
+</script>
+
+</body>
+</html>
