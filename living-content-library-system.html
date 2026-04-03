@@ -198,13 +198,13 @@ function resize() {
 }
 
 function computeLayout() {
-  const margin = 20;
-  const srcColX = margin + 10;
-  const srcColW = W * 0.22;
-  const outColX = W - margin - W * 0.22;
-  const outColW = W * 0.22;
-  const libLeft = srcColX + srcColW + 40;
-  const libRight = outColX - 40;
+  const margin = 14;
+  const srcColX = margin;
+  const srcColW = W * 0.14;
+  const outColX = W - margin - W * 0.155;
+  const outColW = W * 0.155;
+  const libLeft = srcColX + srcColW + 30;
+  const libRight = outColX - 30;
   const libCX = (libLeft + libRight) / 2;
   const libW = libRight - libLeft;
 
@@ -212,13 +212,19 @@ function computeLayout() {
   const botY = H - 30;
   const usableH = botY - topY;
 
-  // Source nodes
+  // Source nodes — sized by node count with compact spacing
   const internalSrcs = sources.filter(s => s.group === 'internal');
   const externalSrcs = sources.filter(s => s.group === 'external');
-  const srcGap = 18;
-  const intH = usableH * 0.46;
-  const extH = usableH * 0.46;
-  const intTop = topY;
+  const nodeRowH = Math.min(36, usableH * 0.065);
+  const framePadTop = 24;
+  const framePadBot = 8;
+  const srcGap = 12;
+
+  const intH = internalSrcs.length * nodeRowH + framePadTop + framePadBot;
+  const extH = externalSrcs.length * nodeRowH + framePadTop + framePadBot;
+  const srcTotalH = intH + srcGap + extH;
+  const srcOffsetY = topY + (usableH - srcTotalH) / 2;
+  const intTop = srcOffsetY;
   const extTop = intTop + intH + srcGap;
 
   const srcNodeX = srcColX + srcColW - 12;
@@ -226,56 +232,62 @@ function computeLayout() {
   allNodes = [];
 
   internalSrcs.forEach((s, i) => {
-    const spacing = intH / (internalSrcs.length + 1);
-    allNodes.push({ ...s, x: srcNodeX, y: intTop + spacing * (i + 1), r: 6, type: 'source' });
+    const y = intTop + framePadTop + nodeRowH * i + nodeRowH / 2;
+    allNodes.push({ ...s, x: srcNodeX, y, r: 6, type: 'source' });
   });
   externalSrcs.forEach((s, i) => {
-    const spacing = extH / (externalSrcs.length + 1);
-    allNodes.push({ ...s, x: srcNodeX, y: extTop + spacing * (i + 1), r: 6, type: 'source' });
+    const y = extTop + framePadTop + nodeRowH * i + nodeRowH / 2;
+    allNodes.push({ ...s, x: srcNodeX, y, r: 6, type: 'source' });
   });
 
-  // Library nodes
-  const libTop = topY + 20;
-  const libBot = botY - 20;
-  const libNodeSpacing = (libBot - libTop - 120) / (libAtoms.length - 1);
-  const libNodeStartY = libTop + 80;
+  // Library nodes — arranged horizontally along the trunk line
+  const libMidY = (topY + botY) / 2;
+  const libInnerLeft = libLeft + 50;
+  const libInnerRight = libRight - 50;
+  const libNodeSpacing = (libInnerRight - libInnerLeft) / (libAtoms.length - 1);
 
   libAtoms.forEach((l, i) => {
-    allNodes.push({ ...l, x: libCX, y: libNodeStartY + i * libNodeSpacing, r: 12, type: 'library' });
+    allNodes.push({ ...l, x: libInnerLeft + i * libNodeSpacing, y: libMidY, r: 10, type: 'library' });
   });
 
-  // Output nodes
+  // Output nodes — sized by node count with compact spacing
   const certOuts = outputs.filter(o => o.group === 'certifications');
   const entOuts = outputs.filter(o => o.group === 'enterprise');
   const tlOuts = outputs.filter(o => o.group === 'thought-leadership');
   const outNodeX = outColX + 12;
   const outGap = 12;
 
-  const certH = usableH * 0.12;
-  const entH = usableH * 0.20;
-  const tlH = usableH * 0.55;
-  const certTop = topY;
+  const certH = certOuts.length * nodeRowH + framePadTop + framePadBot;
+  const entH = entOuts.length * nodeRowH + framePadTop + framePadBot;
+  const tlH = tlOuts.length * nodeRowH + framePadTop + framePadBot;
+  const outTotalH = certH + outGap + entH + outGap + tlH;
+  const outOffsetY = topY + (usableH - outTotalH) / 2;
+  const certTop = outOffsetY;
   const entTop = certTop + certH + outGap;
   const tlTop = entTop + entH + outGap;
 
   certOuts.forEach((o, i) => {
-    const spacing = certH / (certOuts.length + 1);
-    allNodes.push({ ...o, x: outNodeX, y: certTop + spacing * (i + 1), r: 6, type: 'output' });
+    const y = certTop + framePadTop + nodeRowH * i + nodeRowH / 2;
+    allNodes.push({ ...o, x: outNodeX, y, r: 6, type: 'output' });
   });
   entOuts.forEach((o, i) => {
-    const spacing = entH / (entOuts.length + 1);
-    allNodes.push({ ...o, x: outNodeX, y: entTop + spacing * (i + 1), r: 6, type: 'output' });
+    const y = entTop + framePadTop + nodeRowH * i + nodeRowH / 2;
+    allNodes.push({ ...o, x: outNodeX, y, r: 6, type: 'output' });
   });
   tlOuts.forEach((o, i) => {
-    const spacing = tlH / (tlOuts.length + 1);
-    allNodes.push({ ...o, x: outNodeX, y: tlTop + spacing * (i + 1), r: 6, type: 'output' });
+    const y = tlTop + framePadTop + nodeRowH * i + nodeRowH / 2;
+    allNodes.push({ ...o, x: outNodeX, y, r: 6, type: 'output' });
   });
 
   // Store layout info for drawing frames and trunks
+  const libFrameTop = libMidY - 70;
+  const libFrameBot = libMidY + 70;
+  const atomXPositions = libAtoms.map((_, i) => libInnerLeft + i * libNodeSpacing);
   layout = {
     srcColX, srcColW, outColX, outColW,
     libLeft, libRight, libCX, libW,
-    libTop, libBot,
+    libFrameTop, libFrameBot, libMidY,
+    atomXPositions,
     topY, botY,
     srcNodeX, outNodeX,
     intTop, intBot: intTop + intH,
@@ -285,7 +297,7 @@ function computeLayout() {
     tlTop, tlBot: tlTop + tlH,
     trunkInX: libLeft,
     trunkOutX: libRight,
-    trunkMidY: (libTop + libBot) / 2,
+    trunkMidY: libMidY,
   };
 
   initParticles();
@@ -399,20 +411,20 @@ function drawOutputGroupFrame(x, y, w, h, label, accentColor, r) {
 }
 
 function drawLibraryFrame() {
-  const { libLeft, libTop, libBot, libW } = layout;
+  const { libLeft, libRight, libW, libFrameTop, libFrameBot, libCX } = layout;
   const pad = 10;
   const fx = libLeft - pad;
-  const fy = libTop;
+  const fy = libFrameTop;
   const fw = libW + pad * 2;
-  const fh = libBot - libTop;
+  const fh = libFrameBot - libFrameTop;
   const rgb = hexToRgb(C.blue);
 
   // Outer glow
-  const glow = ctx.createRadialGradient(fx + fw/2, fy + fh/2, 10, fx + fw/2, fy + fh/2, Math.max(fw, fh) * 0.8);
-  glow.addColorStop(0, `rgba(${rgb}, 0.05)`);
+  const glow = ctx.createRadialGradient(fx + fw/2, fy + fh/2, 10, fx + fw/2, fy + fh/2, Math.max(fw, fh));
+  glow.addColorStop(0, `rgba(${rgb}, 0.04)`);
   glow.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = glow;
-  ctx.fillRect(fx - 80, fy - 80, fw + 160, fh + 160);
+  ctx.fillRect(fx - 60, fy - 60, fw + 120, fh + 120);
 
   // Container
   roundRect(fx, fy, fw, fh, 14);
@@ -423,39 +435,56 @@ function drawLibraryFrame() {
   ctx.stroke();
 
   // Title
-  ctx.font = '800 14px -apple-system, system-ui, sans-serif';
+  ctx.font = '800 13px -apple-system, system-ui, sans-serif';
   ctx.fillStyle = `rgba(${rgb}, 0.85)`;
   ctx.textAlign = 'center';
-  ctx.fillText('LIVING CONTENT LIBRARY', fx + fw/2, fy + 28);
+  ctx.fillText('LIVING CONTENT LIBRARY', fx + fw/2, fy + 22);
 
   // Subtitle
   ctx.font = '400 10px -apple-system, system-ui, sans-serif';
-  ctx.fillStyle = 'rgba(148, 163, 184, 0.6)';
-  ctx.fillText('Curate \u00b7 Verify \u00b7 Compound', fx + fw/2, fy + 44);
+  ctx.fillStyle = 'rgba(148, 163, 184, 0.55)';
+  ctx.fillText('Curate \u00b7 Verify \u00b7 Compound', fx + fw/2, fy + 36);
 
-  // Badges at bottom
-  const badgeY = fy + fh - 40;
-  const badges = ['TOOL-AGNOSTIC', 'COURSE-AGNOSTIC'];
-  const totalBadgeW = badges.reduce((sum, b) => {
-    ctx.font = '700 9px -apple-system, system-ui, sans-serif';
-    return sum + ctx.measureText(b).width + 18;
-  }, 0) + 10;
-  let bx = fx + fw/2 - totalBadgeW/2;
+  // Badges positioned below trunk line, between atom nodes
+  const { atomXPositions, libMidY } = layout;
+  const tagH = 18;
+  const tagY = libMidY + 28;
 
-  badges.forEach(b => {
-    ctx.font = '700 9px -apple-system, system-ui, sans-serif';
-    const bw = ctx.measureText(b).width + 18;
-    roundRect(bx, badgeY, bw, 22, 5);
-    ctx.fillStyle = `rgba(${rgb}, 0.08)`;
-    ctx.fill();
-    ctx.strokeStyle = `rgba(${rgb}, 0.25)`;
-    ctx.lineWidth = 1;
-    ctx.stroke();
-    ctx.fillStyle = `rgba(${rgb}, 0.75)`;
-    ctx.textAlign = 'center';
-    ctx.fillText(b, bx + bw/2, badgeY + 14.5);
-    bx += bw + 10;
-  });
+  // TOOL-AGNOSTIC — between Concepts (index 0) and Frameworks (index 1)
+  ctx.save();
+  ctx.font = '700 8px -apple-system, system-ui, sans-serif';
+  const tagLeft = 'TOOL-AGNOSTIC';
+  const tagLeftW = ctx.measureText(tagLeft).width + 14;
+  const tagLeftCX = (atomXPositions[0] + atomXPositions[1]) / 2;
+  const tagLeftX = tagLeftCX - tagLeftW / 2;
+  roundRect(tagLeftX, tagY, tagLeftW, tagH, 4);
+  ctx.fillStyle = `rgba(${rgb}, 0.08)`;
+  ctx.fill();
+  ctx.strokeStyle = `rgba(${rgb}, 0.25)`;
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.fillStyle = `rgba(${rgb}, 0.7)`;
+  ctx.textAlign = 'center';
+  ctx.fillText(tagLeft, tagLeftCX, tagY + 12);
+  ctx.restore();
+
+  // COURSE-AGNOSTIC — between Evidence (index 2) and Signals (index 3)
+  ctx.save();
+  ctx.font = '700 8px -apple-system, system-ui, sans-serif';
+  const tagRight = 'COURSE-AGNOSTIC';
+  const tagRightW = ctx.measureText(tagRight).width + 14;
+  const tagRightCX = (atomXPositions[2] + atomXPositions[3]) / 2;
+  const tagRightX = tagRightCX - tagRightW / 2;
+  roundRect(tagRightX, tagY, tagRightW, tagH, 4);
+  ctx.fillStyle = `rgba(${rgb}, 0.08)`;
+  ctx.fill();
+  ctx.strokeStyle = `rgba(${rgb}, 0.25)`;
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.fillStyle = `rgba(${rgb}, 0.7)`;
+  ctx.textAlign = 'center';
+  ctx.fillText(tagRight, tagRightCX, tagY + 12);
+  ctx.restore();
 }
 
 function drawNode(node) {
@@ -506,13 +535,14 @@ function drawNode(node) {
     ctx.fillStyle = subColor;
     ctx.fillText(node.sub, node.x + r + 8, node.y + 13);
   } else {
-    ctx.font = `${isHov ? '700' : '600'} 12px -apple-system, system-ui, sans-serif`;
+    // Library nodes: label above, dot in middle, subtitle below
+    ctx.font = `${isHov ? '700' : '600'} 11px -apple-system, system-ui, sans-serif`;
     ctx.textAlign = 'center';
     ctx.fillStyle = labelColor;
-    ctx.fillText(node.label, node.x, node.y - 2);
+    ctx.fillText(node.label, node.x, node.y - r - 10);
     ctx.font = '400 9px -apple-system, system-ui, sans-serif';
     ctx.fillStyle = subColor;
-    ctx.fillText(node.sub, node.x, node.y + 12);
+    ctx.fillText(node.sub, node.x, node.y + r + 14);
   }
 }
 
@@ -595,40 +625,39 @@ function draw() {
     drawBranchLine(fanX, fanY, n.x, n.y, n.color);
   });
 
-  // -- Feedback loop (outputs → library bottom) --
+  // -- Feedback loop (outputs → below library → back to entry) --
   const fbStartX = fanX;
   const fbStartY = fanY;
-  const fbEndX = L.libCX;
-  const fbEndY = L.libBot - 30;
-  const fbBotY = L.botY + 15;
+  const fbEndX = convX;
+  const fbEndY = convY;
+  const fbBotY = L.libFrameBot + 40;
 
   ctx.beginPath();
-  ctx.moveTo(fbStartX + 20, fbStartY);
+  ctx.moveTo(fbStartX, fbStartY);
   ctx.bezierCurveTo(
-    fbStartX + 60, fbStartY,
-    fbStartX + 60, fbBotY,
-    fbEndX + 80, fbBotY
+    fbStartX + 30, fbStartY,
+    fbStartX + 30, fbBotY,
+    L.libCX, fbBotY
   );
   ctx.bezierCurveTo(
-    fbEndX - 80, fbBotY,
-    fbEndX - 40, fbBotY,
+    fbEndX - 30, fbBotY,
+    fbEndX - 30, fbEndY,
     fbEndX, fbEndY
   );
-  ctx.strokeStyle = `rgba(${hexToRgb(C.amber)}, 0.15)`;
+  ctx.strokeStyle = `rgba(${hexToRgb(C.amber)}, 0.18)`;
   ctx.lineWidth = 1.5;
   ctx.setLineDash([6, 5]);
   ctx.stroke();
   ctx.setLineDash([]);
 
-  // Feedback label
-  const fbLabelX = (fbStartX + fbEndX) / 2 + 20;
+  // Feedback label — centered under the library title
   ctx.font = '700 9px -apple-system, system-ui, sans-serif';
   ctx.fillStyle = `rgba(${hexToRgb(C.amber)}, 0.6)`;
   ctx.textAlign = 'center';
-  ctx.fillText('CONTINUOUS FEEDBACK LOOP', fbLabelX, fbBotY + 14);
+  ctx.fillText('CONTINUOUS FEEDBACK LOOP', L.libCX, fbBotY + 14);
   ctx.font = '400 9px -apple-system, system-ui, sans-serif';
   ctx.fillStyle = `rgba(${hexToRgb(C.amber)}, 0.35)`;
-  ctx.fillText('Outputs generate signal that enriches the library', fbLabelX, fbBotY + 26);
+  ctx.fillText('Outputs generate signal that enriches the library', L.libCX, fbBotY + 26);
 
   // -- Particles on source branches --
   srcNodes.forEach((n, i) => {
@@ -672,21 +701,28 @@ function draw() {
     drawParticle(bx, by, p.size, n.color, p.alpha * (0.4 + 0.6 * Math.sin(t * Math.PI)));
   });
 
-  // -- Feedback particles --
+  // -- Feedback particles (follow the two-segment bezier path) --
   feedbackParticles.forEach(p => {
     p.t += p.speed;
     if (p.t > 1) p.t -= 1;
     const t = p.t;
-    // Approximate bezier path: right side → bottom → back up to library bottom
     let px, py;
     if (t < 0.5) {
       const lt = t * 2;
-      px = fbStartX + 20 + (fbEndX + 80 - fbStartX - 20) * lt * 0.5;
-      py = fbStartY + (fbBotY - fbStartY) * Math.sin(lt * Math.PI * 0.5);
+      const p0x = fbStartX, p0y = fbStartY;
+      const p1x = fbStartX + 30, p1y = fbStartY;
+      const p2x = fbStartX + 30, p2y = fbBotY;
+      const p3x = L.libCX, p3y = fbBotY;
+      px = (1-lt)**3*p0x + 3*(1-lt)**2*lt*p1x + 3*(1-lt)*lt**2*p2x + lt**3*p3x;
+      py = (1-lt)**3*p0y + 3*(1-lt)**2*lt*p1y + 3*(1-lt)*lt**2*p2y + lt**3*p3y;
     } else {
       const lt = (t - 0.5) * 2;
-      px = (fbEndX + 80) - ((fbEndX + 80) - fbEndX) * lt;
-      py = fbBotY - (fbBotY - fbEndY) * Math.sin(lt * Math.PI * 0.5);
+      const p0x = L.libCX, p0y = fbBotY;
+      const p1x = fbEndX - 30, p1y = fbBotY;
+      const p2x = fbEndX - 30, p2y = fbEndY;
+      const p3x = fbEndX, p3y = fbEndY;
+      px = (1-lt)**3*p0x + 3*(1-lt)**2*lt*p1x + 3*(1-lt)*lt**2*p2x + lt**3*p3x;
+      py = (1-lt)**3*p0y + 3*(1-lt)**2*lt*p1y + 3*(1-lt)*lt**2*p2y + lt**3*p3y;
     }
     drawParticle(px, py, p.size, C.amber, p.alpha * (0.3 + 0.5 * Math.sin(t * Math.PI * 2)));
   });
