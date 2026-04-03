@@ -358,16 +358,16 @@ function layoutNodes() {
     connections.push({ from: source, to: o, type: 'out' });
   });
 
-  // Feedback loop path: from right side, curves down and back to library
-  const fbStartX = rightX + 30;
-  const fbEndX = centerX;
-  const fbY = bottomY + 10;
+  // Feedback loop: sweeps from outputs down, across bottom, and back up to sources
+  const fbY = bottomY + 25;
   feedbackPath = [
-    { x: rightX, y: (outStartY + outStartY + (outputs.length - 1) * outSpacing) / 2 },
-    { x: fbStartX + 20, y: fbY - 10 },
-    { x: (fbStartX + fbEndX) / 2, y: fbY + 15 },
-    { x: fbEndX - 30, y: fbY - 10 },
-    { x: fbEndX, y: libStartY + (libraryNodes.length - 1) * libSpacing + 30 },
+    { x: rightX, y: outStartY + (outputs.length - 1) * outSpacing },
+    { x: rightX + 50, y: fbY },
+    { x: W * 0.65, y: fbY + 20 },
+    { x: centerX, y: fbY + 25 },
+    { x: W * 0.35, y: fbY + 20 },
+    { x: leftX - 50, y: fbY },
+    { x: leftX, y: srcStartY + (sources.length - 1) * srcSpacing },
   ];
 
   initParticles();
@@ -381,7 +381,7 @@ function initParticles() {
       particles.push({
         conn: ci,
         t: Math.random(),
-        speed: 0.002 + Math.random() * 0.003,
+        speed: 0.0004 + Math.random() * 0.0006,
         size: 1.5 + Math.random() * 1.5,
         alpha: 0.4 + Math.random() * 0.5,
       });
@@ -389,10 +389,10 @@ function initParticles() {
   });
 
   feedbackParticles = [];
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < 6; i++) {
     feedbackParticles.push({
-      t: Math.random(),
-      speed: 0.0015 + Math.random() * 0.002,
+      t: i / 6,
+      speed: 0.0003 + Math.random() * 0.0004,
       size: 2 + Math.random() * 1.5,
       alpha: 0.5 + Math.random() * 0.4,
     });
@@ -472,12 +472,19 @@ function drawFeedbackCurve() {
   ctx.stroke();
   ctx.setLineDash([]);
 
-  // Label
+  // Arrow heads at both ends
+  const startP = getFeedbackPoint(0.01);
+  const endP = getFeedbackPoint(0.99);
+  
+  // Label at the bottom center
   const mid = getFeedbackPoint(0.5);
-  ctx.font = '600 10px -apple-system, system-ui, sans-serif';
+  ctx.font = '700 10px -apple-system, system-ui, sans-serif';
   ctx.fillStyle = `rgba(${hexToRgb(COLORS.amber)}, 0.7)`;
   ctx.textAlign = 'center';
-  ctx.fillText('FEEDBACK LOOP — Outputs enrich the library continuously', mid.x, mid.y + 18);
+  ctx.fillText('CONTINUOUS FEEDBACK LOOP', mid.x, mid.y + 22);
+  ctx.font = '400 10px -apple-system, system-ui, sans-serif';
+  ctx.fillStyle = `rgba(${hexToRgb(COLORS.amber)}, 0.45)`;
+  ctx.fillText('Outputs generate signal that flows back and enriches sources', mid.x, mid.y + 36);
 }
 
 function drawNode(node) {
@@ -540,39 +547,116 @@ function drawNode(node) {
   }
 }
 
+function drawLibraryFrame() {
+  const libNodes = nodes.filter(n => n.type === 'library');
+  if (!libNodes.length) return;
+
+  const cx = libNodes[0].x;
+  const topY = Math.min(...libNodes.map(n => n.y));
+  const botY = Math.max(...libNodes.map(n => n.y));
+  const padX = 90;
+  const padTop = 70;
+  const padBot = 50;
+
+  const fx = cx - padX;
+  const fy = topY - padTop;
+  const fw = padX * 2;
+  const fh = (botY - topY) + padTop + padBot;
+  const r = 16;
+
+  // Outer glow
+  const glow = ctx.createRadialGradient(cx, topY + (botY - topY) / 2, 10, cx, topY + (botY - topY) / 2, Math.max(fw, fh));
+  glow.addColorStop(0, 'rgba(59, 130, 246, 0.06)');
+  glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(fx - 60, fy - 60, fw + 120, fh + 120);
+
+  // Container background
+  ctx.beginPath();
+  ctx.roundRect(fx, fy, fw, fh, r);
+  ctx.fillStyle = 'rgba(15, 23, 42, 0.5)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(59, 130, 246, 0.25)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Subtle inner border for depth
+  ctx.beginPath();
+  ctx.roundRect(fx + 1, fy + 1, fw - 2, fh - 2, r - 1);
+  ctx.strokeStyle = 'rgba(59, 130, 246, 0.06)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // Title
+  ctx.font = '800 13px -apple-system, system-ui, sans-serif';
+  ctx.fillStyle = 'rgba(59, 130, 246, 0.8)';
+  ctx.textAlign = 'center';
+  ctx.fillText('LIVING CONTENT LIBRARY', cx, fy + 24);
+
+  // Subtitle
+  ctx.font = '400 10px -apple-system, system-ui, sans-serif';
+  ctx.fillStyle = 'rgba(148, 163, 184, 0.6)';
+  ctx.fillText('Curate \u00b7 Verify \u00b7 Compound', cx, fy + 40);
+
+  // Tool-agnostic badge
+  const badgeText = 'TOOL-AGNOSTIC';
+  ctx.font = '700 9px -apple-system, system-ui, sans-serif';
+  const bw = ctx.measureText(badgeText).width + 16;
+  const bh = 20;
+  const bx = cx - bw / 2;
+  const by = botY + 24;
+  ctx.beginPath();
+  ctx.roundRect(bx, by, bw, bh, 4);
+  ctx.fillStyle = 'rgba(59, 130, 246, 0.1)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(59, 130, 246, 0.3)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(59, 130, 246, 0.8)';
+  ctx.textAlign = 'center';
+  ctx.fillText(badgeText, cx, by + 13.5);
+
+  // Course-agnostic badge below
+  const badge2Text = 'COURSE-AGNOSTIC';
+  ctx.font = '700 9px -apple-system, system-ui, sans-serif';
+  const b2w = ctx.measureText(badge2Text).width + 16;
+  const b2x = cx - b2w / 2;
+  const b2y = by + bh + 6;
+  ctx.beginPath();
+  ctx.roundRect(b2x, b2y, b2w, bh, 4);
+  ctx.fillStyle = 'rgba(59, 130, 246, 0.1)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(59, 130, 246, 0.3)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(59, 130, 246, 0.8)';
+  ctx.textAlign = 'center';
+  ctx.fillText(badge2Text, cx, b2y + 13.5);
+}
+
 function drawColumnLabels() {
   const srcNodes = nodes.filter(n => n.type === 'source');
   const outNodes = nodes.filter(n => n.type === 'output');
-  const libNodes = nodes.filter(n => n.type === 'library');
 
   ctx.font = '700 10px -apple-system, system-ui, sans-serif';
   ctx.textAlign = 'center';
-  ctx.letterSpacing = '2px';
 
   if (srcNodes.length) {
     ctx.fillStyle = `rgba(${hexToRgb(COLORS.cyan)}, 0.5)`;
     ctx.fillText('SIGNAL SOURCES', srcNodes[0].x, srcNodes[0].y - 36);
   }
 
-  if (libNodes.length) {
-    ctx.fillStyle = `rgba(${hexToRgb(COLORS.blue)}, 0.6)`;
-    const libTop = Math.min(...libNodes.map(n => n.y));
-    ctx.font = '800 14px -apple-system, system-ui, sans-serif';
-    ctx.fillText('LIVING CONTENT LIBRARY', libNodes[0].x, libTop - 40);
-    ctx.font = '400 10px -apple-system, system-ui, sans-serif';
-    ctx.fillStyle = 'rgba(148,163,184,0.5)';
-    ctx.fillText('Curate \u00b7 Verify \u00b7 Compound', libNodes[0].x, libTop - 24);
-  }
-
   if (outNodes.length) {
     ctx.fillStyle = `rgba(${hexToRgb(COLORS.emerald)}, 0.5)`;
-    ctx.font = '700 10px -apple-system, system-ui, sans-serif';
     ctx.fillText('CONTENT OUTPUTS', outNodes[0].x, outNodes[0].y - 36);
   }
 }
 
 function draw() {
   ctx.clearRect(0, 0, W, H);
+
+  // Library container frame (behind everything)
+  drawLibraryFrame();
 
   // Connections
   connections.forEach(c => drawConnection(c, 1));
