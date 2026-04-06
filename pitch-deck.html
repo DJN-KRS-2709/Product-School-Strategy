@@ -822,8 +822,50 @@
     </div>
   </div>
 
-  <!-- SLIDE 14: Closing -->
-  <div class="slide title-slide" data-slide="14">
+  <!-- SLIDE 14: External Validation -->
+  <div class="slide" data-slide="14">
+    <div class="eyebrow amber">External Validation</div>
+    <h2>Karpathy independently arrived at the same architecture.</h2>
+    <p class="subtitle" style="margin-bottom:20px;">In April 2026, Andrej Karpathy published the <a href="https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f" style="color:var(--cyan); text-decoration:none; font-weight:600;">LLM Wiki</a> pattern — 5,000+ stars in days. The three-layer architecture maps 1:1 to our Living Content Library.</p>
+    <div class="two-col" style="margin-top:8px;">
+      <div>
+        <h3>Architecture convergence</h3>
+        <table class="deck-table">
+          <thead><tr><th>Karpathy's LLM Wiki</th><th>Our Content Library</th></tr></thead>
+          <tbody>
+            <tr><td style="color:var(--text);">Raw sources (immutable)</td><td style="color:var(--cyan);">Signal sources (10 channels)</td></tr>
+            <tr><td style="color:var(--text);">Wiki (LLM-maintained pages)</td><td style="color:var(--cyan);">Library (typed content atoms)</td></tr>
+            <tr><td style="color:var(--text);">Schema (conventions)</td><td style="color:var(--cyan);">Atom schema (metadata + SLAs)</td></tr>
+            <tr><td style="color:var(--text);">Ingest → Query → Lint</td><td style="color:var(--cyan);">Ingest → Compose → Monitor</td></tr>
+            <tr><td style="color:var(--text);">Git + Markdown, no vendor lock-in</td><td style="color:var(--cyan);">Tool-agnostic, course-agnostic</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h3>Where we go further</h3>
+        <div class="card accent-cyan" style="margin-bottom:10px;">
+          <h4>Institutional governance</h4>
+          <p>Role-based creation, promotion, deprecation — Karpathy's is single-user.</p>
+        </div>
+        <div class="card accent-blue" style="margin-bottom:10px;">
+          <h4>Multi-channel output</h4>
+          <p>9 certifications, enterprise, thought leadership — not just personal queries.</p>
+        </div>
+        <div class="card accent-emerald" style="margin-bottom:10px;">
+          <h4>Formalized feedback loops</h4>
+          <p>Systematic routing of surveys, CS, instructor, and enterprise signal back to atoms.</p>
+        </div>
+        <div class="card accent-amber">
+          <h4>Structured atom types</h4>
+          <p>Confidence levels, freshness SLAs, source attribution — beyond free-form wiki pages.</p>
+        </div>
+      </div>
+    </div>
+    <p style="margin-top:16px; font-size:13px; color:var(--text-muted); font-style:italic;">Two different problems, solved independently, producing the same architecture — the strongest form of external validation.</p>
+  </div>
+
+  <!-- SLIDE 15: Closing -->
+  <div class="slide title-slide" data-slide="15">
     <div class="eyebrow cyan">The Compounding System</div>
     <h1>We build the library.<br>The library builds the courses.<br>The courses <span class="gradient">build the library.</span></h1>
     <p class="subtitle">Product School's weapon is a living content library that gets sharper with every cohort, every signal, every feedback loop.</p>

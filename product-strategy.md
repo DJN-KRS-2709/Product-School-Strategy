@@ -512,6 +512,54 @@ These represent the first atoms to migrate from course-specific notes into the s
 
 ---
 
+## External Validation: The LLM Wiki Pattern
+
+In April 2026, Andrej Karpathy published a pattern called the [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) — a method for building personal knowledge bases using LLMs. Within days it had 5,000+ stars and spawned dozens of implementations. The pattern is architecturally identical to our Living Content Library, arrived at independently from a different starting point (personal knowledge management vs. institutional content operations).
+
+### Three-Layer Convergence
+
+| Karpathy's LLM Wiki | Our Living Content Library |
+|---|---|
+| **Raw sources** — immutable PDFs, articles, podcast transcripts | **Signal sources** — Lenny, LinkedIn, surveys, CS conversations, cohort transcripts |
+| **The wiki** — LLM-maintained, interlinked markdown pages | **The library** — content atoms (concepts, frameworks, evidence, signals) with structured metadata |
+| **The schema** — conventions telling the LLM how to maintain the wiki | **The atom schema** — metadata standards, confidence levels, freshness SLAs, governance rules |
+
+Both systems are Git-based, markdown-native, and explicitly vendor-agnostic. Karpathy: *"The wiki is just a git repo of markdown files. You get version history, branching, and collaboration for free."* This mirrors our tool-agnostic design principle.
+
+### Shared Core Thesis
+
+Karpathy frames the problem as the failure of RAG: *"The LLM is rediscovering knowledge from scratch on every question. There's no accumulation."* Our diagnosis is the same problem at institutional scale: each course rediscovers and maintains its own content independently, with no accumulation across the portfolio.
+
+Both solutions respond with the same insight: **compile knowledge once into a persistent, compounding middle layer**, then keep it current rather than re-derive it on every use. Karpathy calls it "the wiki." We call it "the library." The architecture is the same.
+
+### What Karpathy's Pattern Validates
+
+1. **The compounding thesis works.** Karpathy's experience shows that a maintained knowledge layer gets richer with every source added and every question asked. Our three compounding loops (cohort feedback, external signal, cross-course citation) are the institutional version.
+
+2. **LLM-assisted ingestion is ready now.** Karpathy's entire workflow assumes the LLM processes raw sources into structured wiki pages from day one. Our roadmap originally placed AI-assisted ingestion in Phase 5; this evidence supports pulling it to Phase 2 — with human review as the quality gate (which our confidence scoring already provides).
+
+3. **The Ingest → Query → Lint operational model.** Karpathy defines three operations that map directly to our workflow:
+   - **Ingest** = our ingestion pipeline (source → quality gates → atom creation)
+   - **Query** = course authors composing from the library
+   - **Lint** = our freshness SLA monitoring and cross-course consistency checks
+
+4. **Markdown + Git is sufficient infrastructure.** Multiple implementations in Karpathy's thread confirm that the pattern works without databases, embeddings, or complex infrastructure — validating our recommendation to start with Git-based markdown and evaluate tooling upgrades at Phase 4.
+
+### Where We Go Further
+
+Karpathy's pattern is designed for a single person. Our system extends it with:
+
+- **Governance** — role-based creation, promotion, and deprecation of atoms, because multiple contributors require coordination
+- **Typed atoms with structured metadata** — confidence levels, freshness SLAs, source attribution, audience tagging — because institutional content requires more structure than personal notes
+- **Multi-channel output** — the library feeds 9 certifications, enterprise programs, podcasts, blogs, and more — not just personal queries
+- **Formalized feedback loops** — systematic routing of student surveys, CS signals, instructor observations, and enterprise demand back into atoms
+
+### Implication for This Strategy
+
+The independent convergence of Karpathy's personal-scale pattern with our institutional-scale design is the strongest form of external validation: **two different problems, solved independently, producing the same architecture.** This raises confidence that the Living Content Library is not a novel experiment — it is an emerging standard pattern for how knowledge should be managed in the age of LLMs. Product School has the opportunity to be the first education company to implement it at institutional scale.
+
+---
+
 ## Non-Goals
 
 These are deliberately excluded from this strategy:
