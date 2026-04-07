@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product School — Living Content Library: Operational Flow</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  :root {
+    --bg: #06080f;
+    --surface: #0d1321;
+    --surface2: #131b2e;
+    --border: rgba(51, 65, 85, 0.4);
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --dim: #475569;
+    --cyan: #22d3ee;
+    --blue: #3b82f6;
+    --emerald: #34d399;
+    --amber: #fbbf24;
+    --violet: #a78bfa;
+    --orange: #fb923c;
+    --pink: #f472b6;
+    --red: #f87171;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header {
+    text-align: center;
+    padding: 32px 24px 12px;
+  }
+  header h1 {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  header h1 span {
+    background: linear-gradient(135deg, var(--cyan), var(--blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  header p {
+    font-size: 12px;
+    color: var(--dim);
+    margin-top: 6px;
+  }
+
+  .flow-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px 32px 48px;
+    position: relative;
+  }
+
+  /* Central vertical spine */
+  .spine {
+    position: absolute;
+    left: 50%;
+    top: 80px;
+    bottom: 80px;
+    width: 2px;
+    background: linear-gradient(180deg,
+      var(--violet) 0%,
+      var(--cyan) 15%,
+      var(--blue) 30%,
+      var(--amber) 50%,
+      var(--emerald) 70%,
+      var(--orange) 85%,
+      var(--amber) 100%
+    );
+    opacity: 0.25;
+    transform: translateX(-50%);
+  }
+
+  /* Stage row */
+  .stage {
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .stage.reverse { flex-direction: row-reverse; }
+
+  /* Center node on the spine */
+  .stage-node {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    z-index: 10;
+    box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .stage-node:hover {
+    transform: translateX(-50%) scale(1.1);
+    box-shadow: 0 0 30px rgba(0,0,0,0.6);
+  }
+
+  /* Content panel */
+  .stage-content {
+    width: calc(50% - 56px);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 24px;
+    position: relative;
+    transition: border-color 0.3s;
+  }
+  .stage-content:hover {
+    border-color: rgba(148,163,184,0.3);
+  }
+
+  .stage-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .stage-title {
+    font-size: 17px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+  .stage-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.55;
+    margin-bottom: 12px;
+  }
+
+  /* Detail cards within stages */
+  .detail-grid {
+    display: grid;
+    gap: 8px;
+  }
+  .detail-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .detail-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .detail-grid.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+  .detail-card {
+    background: var(--surface2);
+    border: 1px solid rgba(51,65,85,0.25);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .detail-card h5 {
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+  .detail-card p {
+    font-size: 10px;
+    color: var(--dim);
+    line-height: 1.45;
+  }
+
+  /* Arrow connector */
+  .arrow-down {
+    display: flex;
+    justify-content: center;
+    padding: 4px 0;
+    position: relative;
+    z-index: 5;
+  }
+  .arrow-down .arrow-line {
+    width: 2px;
+    height: 28px;
+    position: relative;
+  }
+  .arrow-down .arrow-head {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* Badges */
+  .badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* Gate pills */
+  .gate-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .gate-pill {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    background: rgba(59,130,246,0.08);
+    border: 1px solid rgba(59,130,246,0.2);
+    color: var(--blue);
+  }
+
+  /* SLA table */
+  .sla-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(51,65,85,0.15);
+    font-size: 11px;
+  }
+  .sla-row:last-child { border-bottom: none; }
+  .sla-row .sla-type { color: var(--text); font-weight: 600; }
+  .sla-row .sla-val { font-weight: 700; }
+
+  /* Feedback loop visual */
+  .feedback-banner {
+    max-width: 1100px;
+    margin: 0 auto 40px;
+    padding: 0 32px;
+  }
+  .feedback-inner {
+    background: var(--surface);
+    border: 1px solid rgba(251,191,36,0.2);
+    border-radius: 16px;
+    padding: 24px 32px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .feedback-inner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(251,191,36,0.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .feedback-icon {
+    font-size: 36px;
+    flex-shrink: 0;
+  }
+  .feedback-text h3 {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--amber);
+    margin-bottom: 6px;
+  }
+  .feedback-text p {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+  .feedback-sources {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .feedback-sources .fbsrc {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    background: rgba(251,191,36,0.08);
+    border: 1px solid rgba(251,191,36,0.2);
+    color: var(--amber);
+  }
+
+  /* Spacer for alignment */
+  .spacer { width: calc(50% - 56px); }
+
+  /* Animate in on scroll */
+  .stage, .feedback-banner {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .stage.visible, .feedback-banner.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Particle canvas */
+  #particleCanvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+  }
+  .flow-container, header, .feedback-banner {
+    position: relative;
+    z-index: 1;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="particleCanvas"></canvas>
+
+<header>
+  <h1>Living Content Library — <span>Operational Flow</span></h1>
+  <p>How signals become atoms, atoms become courses, and courses enrich the library</p>
+</header>
+
+<div class="flow-container">
+  <div class="spine"></div>
+
+  <!-- STAGE 1: Signal Intake -->
+  <div class="stage">
+    <div class="stage-content">
+      <div class="stage-label" style="color:var(--violet);">Stage 1</div>
+      <div class="stage-title">Signal Intake</div>
+      <div class="stage-desc">Raw information flows in from 10 channels — 5 internal, 5 external. Each carries different volume, value, and cadence.</div>
+      <div class="detail-grid cols-2">
+        <div class="detail-card" style="border-color:rgba(34,211,238,0.2);">
+          <h5 style="color:var(--cyan);">Internal (5)</h5>
+          <p>Student surveys, Customer Success, instructor observations, enterprise demand, cohort transcripts</p>
+        </div>
+        <div class="detail-card" style="border-color:rgba(167,139,250,0.2);">
+          <h5 style="color:var(--violet);">External (5)</h5>
+          <p>Lenny's newsletter & podcast, Product School events, LinkedIn & social, Substack & blogs, Reddit communities</p>
+        </div>
+      </div>
+    </div>
+    <div class="stage-node" style="background:linear-gradient(135deg, var(--violet), #7c3aed); top:20px;">📡</div>
+    <div class="spacer"></div>
+  </div>
+
+  <div class="arrow-down"><div class="arrow-line" style="background:var(--violet);"><div class="arrow-head" style="border-top:6px solid var(--violet);"></div></div></div>
+
+  <!-- STAGE 2: Quality Gates -->
+  <div class="stage reverse">
+    <div class="stage-content">
+      <div class="stage-label" style="color:var(--cyan);">Stage 2</div>
+      <div class="stage-title">Quality Gates</div>
+      <div class="stage-desc">Not everything enters the library. Every signal passes through four sequential gates before an atom is created.</div>
+      <div class="gate-row">
+        <div class="gate-pill" style="background:rgba(34,211,238,0.08); border-color:rgba(34,211,238,0.2); color:var(--cyan);">1. Extraction</div>
+        <div class="gate-pill" style="background:rgba(34,211,238,0.08); border-color:rgba(34,211,238,0.2); color:var(--cyan);">2. Source Evaluation</div>
+        <div class="gate-pill" style="background:rgba(34,211,238,0.08); border-color:rgba(34,211,238,0.2); color:var(--cyan);">3. Relevance Check</div>
+        <div class="gate-pill" style="background:rgba(34,211,238,0.08); border-color:rgba(34,211,238,0.2); color:var(--cyan);">4. Novelty Filter</div>
+      </div>
+      <div class="stage-desc" style="margin-top:10px; margin-bottom:0; font-style:italic; font-size:11px;">
+        "What is the core insight? Is the source credible? Which courses benefit? Is it already covered?"
+      </div>
+    </div>
+    <div class="stage-node" style="background:linear-gradient(135deg, var(--cyan), #0891b2); top:20px;">🔍</div>
+    <div class="spacer"></div>
+  </div>
+
+  <div class="arrow-down"><div class="arrow-line" style="background:var(--cyan);"><div class="arrow-head" style="border-top:6px solid var(--cyan);"></div></div></div>
+
+  <!-- STAGE 3: Atom Creation -->
+  <div class="stage">
+    <div class="stage-content">
+      <div class="stage-label" style="color:var(--blue);">Stage 3</div>
+      <div class="stage-title">Atom Creation &amp; Typing</div>
+      <div class="stage-desc">Signals that pass the gates are structured into one of four atom types, each with full metadata: unique ID, source, dates, confidence level, tags, and course mappings.</div>
+      <div class="detail-grid cols-4">
+        <div class="detail-card" style="border-color:rgba(34,211,238,0.2);">
+          <h5 style="color:var(--cyan);">◆ Concept</h5>
+          <p>Canonical definitions</p>
+        </div>
+        <div class="detail-card" style="border-color:rgba(59,130,246,0.2);">
+          <h5 style="color:var(--blue);">▲ Framework</h5>
+          <p>Reusable models</p>
+        </div>
+        <div class="detail-card" style="border-color:rgba(52,211,153,0.2);">
+          <h5 style="color:var(--emerald);">● Evidence</h5>
+          <p>Case studies & stats</p>
+        </div>
+        <div class="detail-card" style="border-color:rgba(251,191,36,0.2);">
+          <h5 style="color:var(--amber);">⚡ Signal</h5>
+          <p>Emerging insights</p>
+        </div>
+      </div>
+      <div style="margin-top:10px; display:flex; gap:6px;">
+        <span class="badge" style="background:rgba(59,130,246,0.1); color:var(--blue);">TOOL-AGNOSTIC</span>
+        <span class="badge" style="background:rgba(59,130,246,0.1); color:var(--blue);">COURSE-AGNOSTIC</span>
+        <span class="badge" style="background:rgba(59,130,246,0.1); color:var(--blue);">METADATA-RICH</span>
+      </div>
+    </div>
+    <div class="stage-node" style="background:linear-gradient(135deg, var(--blue), #2563eb); top:20px;">⚛</div>
+    <div class="spacer"></div>
+  </div>
+
+  <div class="arrow-down"><div class="arrow-line" style="background:var(--blue);"><div class="arrow-head" style="border-top:6px solid var(--blue);"></div></div></div>
+
+  <!-- STAGE 4: Confidence Lifecycle -->
+  <div class="stage reverse">
+    <div class="stage-content">
+      <div class="stage-label" style="color:var(--amber);">Stage 4</div>
+      <div class="stage-title">Confidence Lifecycle</div>
+      <div class="stage-desc">Every atom enters at a confidence level and is promoted or deprecated through curation. This is the trust contract.</div>
+      <div class="detail-grid cols-3">
+        <div class="detail-card" style="border-color:rgba(251,146,60,0.25);">
+          <h5 style="color:var(--orange);">Speculative</h5>
+          <p>Signal only. Trending or unverified. Do not use in courses without escalation.</p>
+        </div>
+        <div class="detail-card" style="border-color:rgba(251,191,36,0.25);">
+          <h5 style="color:var(--amber);">Emerging</h5>
+          <p>Single credible source, not yet classroom-tested. Use with context: "recent research suggests..."</p>
+        </div>
+        <div class="detail-card" style="border-color:rgba(52,211,153,0.25);">
+          <h5 style="color:var(--emerald);">Validated</h5>
+          <p>Multiple sources, taught in cohort, positive student signal. Use directly and cite as established.</p>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:12px; font-size:11px; color:var(--muted);">
+        <span style="color:var(--orange); font-weight:700;">Speculative</span>
+        <span style="flex:1; height:2px; background:linear-gradient(90deg, var(--orange), var(--amber), var(--emerald)); border-radius:2px;"></span>
+        <span style="color:var(--emerald); font-weight:700;">Validated</span>
+      </div>
+    </div>
+    <div class="stage-node" style="background:linear-gradient(135deg, var(--amber), #d97706); top:20px;">🎯</div>
+    <div class="spacer"></div>
+  </div>
+
+  <div class="arrow-down"><div class="arrow-line" style="background:var(--amber);"><div class="arrow-head" style="border-top:6px solid var(--amber);"></div></div></div>
+
+  <!-- STAGE 5: Freshness Monitoring -->
+  <div class="stage">
+    <div class="stage-content">
+      <div class="stage-label" style="color:var(--emerald);">Stage 5</div>
+      <div class="stage-title">Freshness Monitoring &amp; Lint</div>
+      <div class="stage-desc">Every atom has a verification SLA based on its type. Automated alerts fire when atoms exceed their window. Periodic lint checks catch contradictions, orphans, and gaps.</div>
+      <div style="margin-top:4px;">
+        <div class="sla-row">
+          <span class="sla-type">◆ Concept</span>
+          <span class="sla-val" style="color:var(--emerald);">Every 180 days</span>
+        </div>
+        <div class="sla-row">
+          <span class="sla-type">▲ Framework</span>
+          <span class="sla-val" style="color:var(--emerald);">Every 180 days</span>
+        </div>
+        <div class="sla-row">
+          <span class="sla-type">● Evidence</span>
+          <span class="sla-val" style="color:var(--amber);">Every 90 days</span>
+        </div>
+        <div class="sla-row">
+          <span class="sla-type">⚡ Signal</span>
+          <span class="sla-val" style="color:var(--orange);">Every 60 days</span>
+        </div>
+      </div>
+      <div class="gate-row">
+        <div class="gate-pill" style="background:rgba(52,211,153,0.08); border-color:rgba(52,211,153,0.2); color:var(--emerald);">Contradiction check</div>
+        <div class="gate-pill" style="background:rgba(52,211,153,0.08); border-color:rgba(52,211,153,0.2); color:var(--emerald);">Orphan detection</div>
+        <div class="gate-pill" style="background:rgba(52,211,153,0.08); border-color:rgba(52,211,153,0.2); color:var(--emerald);">Gap analysis</div>
+        <div class="gate-pill" style="background:rgba(52,211,153,0.08); border-color:rgba(52,211,153,0.2); color:var(--emerald);">Stale claim sweep</div>
+      </div>
+    </div>
+    <div class="stage-node" style="background:linear-gradient(135deg, var(--emerald), #059669); top:20px;">🔄</div>
+    <div class="spacer"></div>
+  </div>
+
+  <div class="arrow-down"><div class="arrow-line" style="background:var(--emerald);"><div class="arrow-head" style="border-top:6px solid var(--emerald);"></div></div></div>
+
+  <!-- STAGE 6: Output Composition -->
+  <div class="stage reverse">
+    <div class="stage-content">
+      <div class="stage-label" style="color:var(--orange);">Stage 6</div>
+      <div class="stage-title">Output Composition</div>
+      <div class="stage-desc">Courses and other outputs don't store content — they reference atoms. A single atom can serve multiple outputs simultaneously. Update once, propagate everywhere.</div>
+      <div class="detail-grid cols-3">
+        <div class="detail-card" style="border-color:rgba(52,211,153,0.2);">
+          <h5 style="color:var(--emerald);">Certifications</h5>
+          <p>9 courses compose from shared atoms. Cross-course consistency is structural.</p>
+        </div>
+        <div class="detail-card" style="border-color:rgba(251,146,60,0.2);">
+          <h5 style="color:var(--orange);">Enterprise</h5>
+          <p>Custom workshops composed from verified atoms with freshness metadata for each element.</p>
+        </div>
+        <div class="detail-card" style="border-color:rgba(244,114,182,0.2);">
+          <h5 style="color:var(--pink);">Thought Leadership</h5>
+          <p>Podcasts, blogs, LinkedIn, speaker materials, newsletters — all sourced from the library.</p>
+        </div>
+      </div>
+      <div style="margin-top:10px; font-size:11px; color:var(--muted); font-style:italic;">
+        Average target: 2.5+ courses per atom — every atom earns its place through cross-course utility.
+      </div>
+    </div>
+    <div class="stage-node" style="background:linear-gradient(135deg, var(--orange), #ea580c); top:20px;">📦</div>
+    <div class="spacer"></div>
+  </div>
+
+  <div class="arrow-down"><div class="arrow-line" style="background:var(--orange);"><div class="arrow-head" style="border-top:6px solid var(--orange);"></div></div></div>
+
+  <!-- STAGE 7: Governance -->
+  <div class="stage">
+    <div class="stage-content">
+      <div class="stage-label" style="color:var(--pink);">Stage 7</div>
+      <div class="stage-title">Governance &amp; Roles</div>
+      <div class="stage-desc">Clear ownership at every stage ensures quality without bottlenecks. Low barrier to create, high bar to validate.</div>
+      <div class="detail-grid cols-3">
+        <div class="detail-card" style="border-color:rgba(52,211,153,0.2);">
+          <h5 style="color:var(--emerald);">Create → Anyone</h5>
+          <p>Course authors, instructors, content team, CPTO. Capture signal from everywhere.</p>
+        </div>
+        <div class="detail-card" style="border-color:rgba(251,191,36,0.2);">
+          <h5 style="color:var(--amber);">Promote → Content leads</h5>
+          <p>Source verification, peer review, course mapping decision required.</p>
+        </div>
+        <div class="detail-card" style="border-color:rgba(251,146,60,0.2);">
+          <h5 style="color:var(--orange);">Deprecate → CPTO + leads</h5>
+          <p>Archived with full history and rationale. Never deleted.</p>
+        </div>
+      </div>
+    </div>
+    <div class="stage-node" style="background:linear-gradient(135deg, var(--pink), #db2777); top:20px;">🛡</div>
+    <div class="spacer"></div>
+  </div>
+
+</div>
+
+<!-- FEEDBACK LOOP -->
+<div class="feedback-banner">
+  <div class="feedback-inner">
+    <div class="feedback-icon">♻️</div>
+    <div class="feedback-text">
+      <h3>Continuous Feedback Loop — Back to Stage 1</h3>
+      <p>Every output generates signal that flows back into the library. Student confusion flags atoms for review. Instructor adaptations enrich teaching notes. Enterprise demand shapes investment priority. The system compounds — it gets smarter with every cohort, every delivery, every interaction.</p>
+      <div class="feedback-sources">
+        <span class="fbsrc">Student surveys → atom review</span>
+        <span class="fbsrc">CS conversations → demand signal</span>
+        <span class="fbsrc">Instructor debriefs → atom annotations</span>
+        <span class="fbsrc">Enterprise requests → new atoms</span>
+        <span class="fbsrc">Usage analytics → priority ranking</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Ambient particles
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+const particles = [];
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+for (let i = 0; i < 40; i++) {
+  particles.push({
+    x: Math.random() * W,
+    y: Math.random() * H * 3,
+    vx: (Math.random() - 0.5) * 0.15,
+    vy: -0.1 - Math.random() * 0.2,
+    size: 1 + Math.random() * 1.5,
+    alpha: 0.1 + Math.random() * 0.2,
+    color: ['#22d3ee','#3b82f6','#34d399','#fbbf24','#a78bfa'][Math.floor(Math.random()*5)]
+  });
+}
+
+function drawParticles() {
+  ctx.clearRect(0, 0, W, H);
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    if (p.y < -10) { p.y = H + 10; p.x = Math.random() * W; }
+    if (p.x < -10) p.x = W + 10;
+    if (p.x > W + 10) p.x = -10;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y % (H + 20), p.size, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = p.alpha;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  });
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+// Scroll reveal
+const stages = document.querySelectorAll('.stage, .feedback-banner');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('visible');
+  });
+}, { threshold: 0.15 });
+stages.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
