@@ -280,7 +280,7 @@ function computeLayout() {
   });
 
   // Store layout info for drawing frames and trunks
-  const libFrameTop = libMidY - 70;
+  const libFrameTop = libMidY - 86;
   const libFrameBot = libMidY + 70;
   const atomXPositions = libAtoms.map((_, i) => libInnerLeft + i * libNodeSpacing);
   layout = {
@@ -438,12 +438,91 @@ function drawLibraryFrame() {
   ctx.font = '800 13px -apple-system, system-ui, sans-serif';
   ctx.fillStyle = `rgba(${rgb}, 0.85)`;
   ctx.textAlign = 'center';
-  ctx.fillText('LIVING CONTENT LIBRARY', fx + fw/2, fy + 22);
+  ctx.fillText('LIVING CONTENT LIBRARY', fx + fw/2, fy + 20);
 
-  // Subtitle
-  ctx.font = '400 10px -apple-system, system-ui, sans-serif';
-  ctx.fillStyle = 'rgba(148, 163, 184, 0.55)';
-  ctx.fillText('Curate \u00b7 Verify \u00b7 Compound', fx + fw/2, fy + 36);
+  // Content Development Life Cycle — four phases with arrows
+  const phases = [
+    { label: 'GENERATE', color: C.violet },
+    { label: 'EVALUATE', color: C.cyan },
+    { label: 'DISTRIBUTE', color: C.emerald },
+    { label: 'OBSERVE', color: C.amber },
+  ];
+  const phaseY = fy + 42;
+  const phaseW = fw * 0.18;
+  const phaseH = 20;
+  const totalPhasesW = phases.length * phaseW + (phases.length - 1) * 24;
+  const phaseStartX = fx + fw / 2 - totalPhasesW / 2;
+
+  phases.forEach((p, i) => {
+    const px = phaseStartX + i * (phaseW + 24);
+    const prgb = hexToRgb(p.color);
+
+    // Phase pill
+    ctx.save();
+    roundRect(px, phaseY, phaseW, phaseH, 5);
+    ctx.fillStyle = `rgba(${prgb}, 0.1)`;
+    ctx.fill();
+    ctx.strokeStyle = `rgba(${prgb}, 0.3)`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.font = '700 8px -apple-system, system-ui, sans-serif';
+    ctx.fillStyle = `rgba(${prgb}, 0.8)`;
+    ctx.textAlign = 'center';
+    ctx.fillText(p.label, px + phaseW / 2, phaseY + 13);
+    ctx.restore();
+
+    // Arrow between phases
+    if (i < phases.length - 1) {
+      const arrowX1 = px + phaseW + 4;
+      const arrowX2 = px + phaseW + 20;
+      const arrowMidY = phaseY + phaseH / 2;
+      ctx.beginPath();
+      ctx.moveTo(arrowX1, arrowMidY);
+      ctx.lineTo(arrowX2, arrowMidY);
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.25)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      // Arrowhead
+      ctx.beginPath();
+      ctx.moveTo(arrowX2, arrowMidY);
+      ctx.lineTo(arrowX2 - 4, arrowMidY - 3);
+      ctx.lineTo(arrowX2 - 4, arrowMidY + 3);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(148, 163, 184, 0.25)';
+      ctx.fill();
+    }
+  });
+
+  // Return arrow from OBSERVE back to GENERATE (curved below the phases)
+  const returnStartX = phaseStartX + 3 * (phaseW + 24) + phaseW + 4;
+  const returnEndX = phaseStartX - 4;
+  const returnY = phaseY + phaseH / 2;
+  const returnBotY = phaseY + phaseH + 10;
+  ctx.beginPath();
+  ctx.moveTo(returnStartX, returnY);
+  ctx.bezierCurveTo(
+    returnStartX + 10, returnY,
+    returnStartX + 10, returnBotY,
+    fx + fw / 2, returnBotY
+  );
+  ctx.bezierCurveTo(
+    returnEndX - 10, returnBotY,
+    returnEndX - 10, returnY,
+    returnEndX, returnY
+  );
+  ctx.strokeStyle = 'rgba(251, 191, 36, 0.15)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3, 3]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  // Arrowhead pointing to GENERATE
+  ctx.beginPath();
+  ctx.moveTo(returnEndX, returnY);
+  ctx.lineTo(returnEndX + 4, returnY - 3);
+  ctx.lineTo(returnEndX + 4, returnY + 3);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(251, 191, 36, 0.25)';
+  ctx.fill();
 
   // Badges positioned below trunk line, between atom nodes
   const { atomXPositions, libMidY } = layout;
