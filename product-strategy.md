@@ -34,7 +34,7 @@ Product School operates nine certifications:
 
 Each certification was built and is maintained independently. The AI Product Strategy course lives in its own repo with its own speaker notes, slides, meeting notes, and insights folder. The Vibe Coding certification has its own repo with its own instructor guide, its own feedback synthesis, its own competitive analysis. AI Agents has a single markdown file containing all six modules. AI for PMs has six separate files under an `Insights/` folder.
 
-This independence served early speed. It now creates five structural problems:
+This independence served early speed. It now creates seven structural problems:
 
 **1. Framework drift.** The same concept is taught differently across courses with no canonical definition. The Agent Spectrum appears in both AI Agents (Helper → Teammate → Operator; levels 0–3) and AI for PMs (levels 0–3 with similar but not identical definitions). AWSpec is taught in both. Eval stacks appear in AI for PMs, AI Product Strategy (M4), and presumably AI Evals. Each instructor interprets and presents these independently.
 
@@ -46,9 +46,13 @@ This independence served early speed. It now creates five structural problems:
 
 **5. External signal is ad-hoc.** The AI Product Strategy course draws on Lenny's newsletter and podcast, Gokul Rajaram's 8 Moats framework, Hamilton Helmer's 7 Powers, and other sources. These are curated by individual course authors based on personal reading. LinkedIn posts with high traction about new frameworks, Substack thought pieces, Reddit discussions — none of these are systematically captured, evaluated, or routed to the courses that would benefit.
 
+**6. Slides are too thin as a source of truth.** Existing courses often require an instructor in the room to make the material legible. Slides, lab docs, speaker notes, recordings, and activity instructions live as separate artifacts, so the explanatory layer a student needs for on-demand learning is not consistently attached to the module itself.
+
+**7. Enterprise repackaging breaks the story.** Consumer courses are designed as sequential arcs. Enterprise programs need to compose smaller modules around a client's desired outcomes. Without dependency metadata, course-specific references, and repackaging rules, custom programs risk feeling like fragments stitched together from unrelated courses.
+
 ### The Root Cause
 
-The root cause is the same one diagnosed in the Vibe Coding redesign: **the unit of content management is the course, when it should be the concept.** Just as the old AI Prototyping course "tried to teach a tool" when it should have been "teaching a process," our content operations try to maintain courses when they should be maintaining knowledge.
+The root cause is the same one diagnosed in the Vibe Coding redesign: **the unit of content management is the course, when it should be the concept and the module contract that carries it.** Just as the old AI Prototyping course "tried to teach a tool" when it should have been "teaching a process," our content operations try to maintain courses when they should be maintaining knowledge, dependencies, and generated delivery outputs from a shared source.
 
 ---
 
@@ -92,6 +96,17 @@ Each atom carries metadata:
 - **Confidence level**: Validated (multiple sources + taught in at least one cohort), Emerging (single credible source, not yet tested in class), Speculative (signal only, needs curation)
 - **Courses that reference it** (automatically tracked)
 - **Tags** for concept domain, audience level, and topic area
+
+#### What a Module Contract Is
+
+A module contract is the smallest unit of course packaging that can be delivered to students or composed into an enterprise program. It is not just a slide deck. It defines the learning outcome, required atoms, narrative dependencies, activity instructions, speaker notes, student-facing explanations, assessment hooks, and generated outputs for live teaching, LMS access, recordings, and enterprise reuse.
+
+The contract answers four questions:
+
+- **What must the learner understand or be able to do by the end of this module?**
+- **Which atoms are required, optional, or background context?**
+- **Can this module stand alone, or must it travel with another module to preserve the story?**
+- **Which course-specific references need to be removed or rewritten when this module is repackaged for enterprise?**
 
 #### Why We Know This Is the Right Bet
 
@@ -167,6 +182,7 @@ For a content business, the equivalent of inference costs is **content creation 
 |-------------|-----------------|-----------------|
 | New course creation | Compose from existing atoms; only create atoms for genuinely new concepts | Estimated 40–60% reduction in content creation time for new certifications |
 | Content updates | Update an atom once, propagation is automatic to all referencing courses | Linear scaling eliminated — one update, N courses benefit |
+| Course delivery outputs | Generate slides, speaker notes, student notes, LMS pages, and enterprise handouts from canonical module contracts | One structured source, many delivery formats |
 | External research | Centralized ingestion pipeline; one researcher's work benefits all 9 courses | 9x leverage on external research investment |
 | Feedback processing | Feedback routes to atoms, not courses; cross-course pattern detection becomes possible | Systemic improvements replace one-off fixes |
 | Quality assurance | Canonical definitions prevent drift; automated alerts when an atom hasn't been verified within its SLA window | Consistency is structural, not aspirational |
@@ -274,6 +290,7 @@ The AI Product Strategy course teaches that "the system learns from every intera
 | **Student surveys** | Satisfaction scores per topic, free-text feedback | NLP extraction of topic mentions → mapped to atoms → flagged for review if negative signal |
 | **Customer Success** | Enterprise customer requests, pain points, feature asks | CS team tags atoms relevant to each conversation → demand signal informs atom priority |
 | **Instructor observations** | In-class adaptations, questions that reveal gaps, concepts that land well | Post-cohort debrief creates atom annotations: "works well when explained as X" or "students consistently confused by Y" |
+| **Live session recordings** | Full explanations, Q&A, timing friction, examples that were not in slides | Transcript extraction enriches module contracts with student-facing notes and teaching guidance |
 | **Enterprise demand** | What enterprise customers want in custom programs, what topics they prioritize | Demand patterns inform atom investment priority and new atom creation |
 | **External sources** | Podcast transcripts, newsletter posts, LinkedIn/Substack, Reddit threads | Ingestion pipeline (see above) creates new atoms or enriches existing ones |
 
@@ -288,6 +305,7 @@ The specific compounding mechanisms:
 3. **Positive feedback** reveals what works — "aha moment" annotations help other instructors teach the same concept effectively
 4. **External signal** reveals market movement — new frameworks, new case studies, new evidence keep the library ahead of the industry
 5. **Enterprise demand** reveals market needs — what enterprise customers ask for shapes which atoms get invested in next
+6. **Module dependency metadata** preserves narrative quality — enterprise packages can be recomposed around a client outcome without accidentally separating concepts that need to be taught together
 
 ---
 
@@ -333,13 +351,15 @@ Phase 1-2: High Ambiguity      →  Phase 3-4: Gaining Clarity     →  Phase 5-
 - Repository structure for the content library with atom schema and metadata standards
 - Seed the library with atoms extracted from the four existing course repos (AI Product Strategy, Vibe Coding, AI Agents, AI for PMs)
 - Create the initial content inventory: what exists, where, what overlaps
+- Define the module contract for course content: learning outcome, required atoms, speaker notes, student-facing explanation, activity instructions, dependency rules, and generated outputs
 
 **What we learn:**
 - How many unique atoms exist across the four courses vs. how many are duplicates or near-duplicates
 - Which concepts are foundational (referenced by 3+ courses) and which are course-specific
 - What the natural taxonomy looks like when content is decomposed into atoms
+- Which course artifacts are canonical inputs versus generated outputs
 
-**Success signal:** We can answer: "How many canonical concepts does Product School teach, and which courses use each one?"
+**Success signal:** We can answer: "How many canonical concepts does Product School teach, which courses use each one, and what source material generates each module's slides, notes, activities, and LMS view?"
 
 ### Phase 2: Ingestion Pipelines (Weeks 3–6)
 
@@ -365,13 +385,15 @@ Phase 1-2: High Ambiguity      →  Phase 3-4: Gaining Clarity     →  Phase 5-
 - Refactor AI Product Strategy and Vibe Coding (the two most architecturally mature courses) to reference library atoms instead of inline content
 - Create canonical definitions for the top 20 most cross-referenced concepts
 - Build the first cross-course consistency report: where do current courses diverge from canonical definitions?
+- Convert selected modules into canonical module contracts that can generate slides, instructor notes, student notes, and LMS-ready pages
 
 **What we learn:**
 - How much course-specific adaptation is appropriate vs. how much should be standardized
 - Whether instructors find the library workflow natural or burdensome
 - What the right balance is between atom-level modularity and course-level narrative coherence
+- Whether students can understand the module from the generated notes without the instructor narrating the slide deck
 
-**Success signal:** Two courses are wired to the library. Instructors for those courses can see, in one view, which atoms changed since their last cohort delivery.
+**Success signal:** Two courses are wired to the library. Instructors for those courses can see, in one view, which atoms changed since their last cohort delivery. At least one module can be generated into live-teaching and on-demand formats from the same source.
 
 ### Phase 4: Curation Workflow (Weeks 10–14)
 
@@ -381,13 +403,15 @@ Phase 1-2: High Ambiguity      →  Phase 3-4: Gaining Clarity     →  Phase 5-
 - Formal curation roles: who reviews new atoms, who promotes from Emerging to Validated, who depreciates stale atoms
 - Freshness SLA monitoring: automated alerts when atoms exceed their verification window
 - Enterprise content dashboard: a view for enterprise customers showing content freshness and last-verified dates
+- Enterprise packaging rules: module dependency constraints, course-reference cleanup, and guidance for composing a coherent client-specific story
 
 **What we learn:**
 - What the sustainable curation throughput is (atoms reviewed per week per content lead)
 - Whether freshness SLAs are realistic or need adjustment
 - How enterprise customers respond to content transparency
+- Which modules are truly standalone and which must travel together to preserve the learning outcome
 
-**Success signal:** 90% of Validated atoms are within their freshness SLA. Enterprise sales team can demo the content freshness dashboard in pitches.
+**Success signal:** 90% of Validated atoms are within their freshness SLA. Enterprise sales team can demo the content freshness dashboard in pitches and generate a custom program outline that respects module dependency rules.
 
 ### Phase 5: Compounding Systems (Weeks 14–20)
 
@@ -397,11 +421,13 @@ Phase 1-2: High Ambiguity      →  Phase 3-4: Gaining Clarity     →  Phase 5-
 - Automated cross-course impact analysis: when an atom is updated, flag all courses that reference it and surface the change to course authors
 - Feedback loop analytics: which atoms generate the most student confusion (negative signal), which generate the most "aha moments" (positive signal)
 - AI-assisted ingestion: automated extraction of insights from podcast transcripts, newsletter posts, and other text sources, with human review before promotion
+- AI-assisted update propagation across module contracts so approved changes can regenerate slides, notes, and LMS content without manual edits in every artifact
 
 **What we learn:**
 - Which compounding loops generate the most value: cohort feedback, external signal, or cross-course citation
 - Whether AI-assisted ingestion maintains quality standards
 - What the compound growth rate of the library is — how many high-quality atoms per month
+- How much content-maintenance effort shifts from manual slide editing to review of structured updates
 
 **Success signal:** The library is growing at 20+ validated atoms per month. Cross-course consistency is measurable and improving. Student satisfaction in piloted courses trends upward correlated with content freshness.
 
@@ -506,9 +532,11 @@ These represent the first atoms to migrate from course-specific notes into the s
 |----------|---------|-------|--------|
 | Which five courses beyond the four discovered repos need to be inventoried? | PM, GTM, Experimentation, Leadership, AI Evals — need access to content repos or materials | CPTO | Open |
 | What is the right tooling for the library? | Git-based markdown (current approach) vs. structured CMS vs. knowledge graph tool | CPTO + Engineering | Open — recommend starting with Git-based markdown for speed, evaluate tooling upgrade at Phase 4 |
+| What is the right "course API" contract? | Atom-only schema vs. module contracts that generate slides, notes, LMS pages, and enterprise packages | CPTO + Content Team | Open — recommend module contracts as the packaging layer above atoms |
 | Who owns curation operationally? | Dedicated content ops role vs. distributed across course leads vs. hybrid | CPTO | Open — recommend hybrid: CPTO sets standards, course leads curate within their domain |
 | How deep should AI-assisted ingestion go? | Manual extraction only vs. AI extraction with human review vs. fully automated with spot checks | CPTO + Content Team | Open — recommend AI extraction with human review starting in Phase 2 |
 | Should enterprise customers see the library directly? | Full transparency vs. curated view vs. metadata only (freshness dates, not raw atoms) | CPTO + Enterprise Sales | Open — recommend metadata view initially, expand based on customer feedback |
+| How do we validate the repo-native course format? | AI Product Strategy survey question, qualitative learner feedback, LMS usage, instructor notes | CPTO + Content Team | Open — add explicit format-feedback question to the next course survey |
 
 ---
 
@@ -564,7 +592,7 @@ The independent convergence of Karpathy's personal-scale pattern with our instit
 
 These are deliberately excluded from this strategy:
 
-1. **Building a CMS or LMS.** The library is a knowledge layer, not a delivery platform. Courses are still delivered through Product School's existing channels. The library feeds content into courses; it does not replace the course delivery infrastructure.
+1. **Building a CMS or LMS.** The library is a knowledge layer, not a delivery platform. Courses are still delivered through Product School's existing channels. The library should generate LMS-ready content, but it does not replace the LMS or own enrollment, access, or classroom operations.
 
 2. **Replacing instructor judgment.** Atoms provide the canonical knowledge; instructors adapt delivery to their cohort's level, energy, and needs. The library makes better content available — it does not script delivery.
 

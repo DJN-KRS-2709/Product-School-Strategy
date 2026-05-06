@@ -145,9 +145,30 @@ Internal Sources                    External Sources
 
 ---
 
+### 6. Course Build and Content Ops Working Sessions
+
+**What it captures:** Decisions made while courses are created, audited, converted into repos, prepared for LMS access, or repackaged for enterprise. These sessions surface source-of-truth rules, module dependencies, course-specific references that need cleanup, and the operational constraints that do not show up in slide decks.
+
+**Current state:** These decisions are often made in meetings and Slack threads, then applied manually by the content owner. The signal is high value but easy to lose because it is about how the content should be maintained, not just what the course teaches.
+
+**Capture strategy:**
+
+| Step | Action | Frequency |
+|------|--------|-----------|
+| Record | Capture working sessions where content structure, course conversion, LMS needs, or enterprise packaging decisions are made | Per session |
+| Extract | Identify source-of-truth decisions, module dependency rules, generated output needs, and repackaging constraints | Within 48 hours |
+| Map | Route decisions to module contracts, atom metadata, or operating docs | Within 1 week |
+| Close loop | Confirm with the content owner that the extracted rules match how they actually build and maintain courses | Within 1 week |
+
+**Expected volume:** Low to moderate. Each session can produce multiple durable operating rules.
+
+**Value signal:** Very high for implementation. These sessions define the "course API" that lets one source generate slides, speaker notes, student notes, LMS views, and enterprise packages.
+
+---
+
 ## External Sources
 
-### 6. Lenny's Newsletter and Podcast
+### 7. Lenny's Newsletter and Podcast
 
 **What it captures:** PM-focused analysis on AI products, pricing, evals, adoption, strategy. Already proven as a high-value source — `lenny-insights.md` in the AI Product Strategy repo maps 10+ sources to specific modules with actionable integration notes.
 
@@ -183,7 +204,7 @@ The following sources from `lenny-insights.md` should be the first external sign
 
 ---
 
-### 7. Product School Events and Conferences
+### 8. Product School Events and Conferences
 
 **What it captures:** Keynotes, panels, workshops, and speaker content from Product School's own events. Product School hosts significant events with industry leaders — this content is proprietary and should be a competitive advantage.
 
@@ -203,7 +224,7 @@ The following sources from `lenny-insights.md` should be the first external sign
 
 ---
 
-### 8. LinkedIn (High-Traction Posts and Thought Leadership)
+### 9. LinkedIn (High-Traction Posts and Thought Leadership)
 
 **What it captures:** Emerging frameworks, contrarian takes, new tools, real-world case studies shared by PM practitioners and AI leaders. LinkedIn is where new PM thinking surfaces first — often before it appears in newsletters or podcasts.
 
@@ -227,7 +248,7 @@ Category: PM and AI product leaders with consistently high-quality, curriculum-r
 
 ---
 
-### 9. Substack and Independent Blogs
+### 10. Substack and Independent Blogs
 
 **What it captures:** Long-form analysis from independent PM and AI thinkers. Substacks often go deeper than LinkedIn posts and provide more rigorous analysis. Key publications include Lenny's (covered separately), but also Stratechery (Ben Thompson), The Pragmatic Engineer (Gergely Orosz), and emerging AI-focused PM publications.
 
@@ -246,7 +267,7 @@ Category: PM and AI product leaders with consistently high-quality, curriculum-r
 
 ---
 
-### 10. Reddit (r/ProductManagement, r/artificial, r/MachineLearning, etc.)
+### 11. Reddit (r/ProductManagement, r/artificial, r/MachineLearning, etc.)
 
 **What it captures:** Practitioner discussions, real-world challenges, tool comparisons, failure stories, and emerging practices. Reddit surfaces problems and solutions that polished publications don't cover — the messy reality of AI product work.
 
@@ -318,6 +339,7 @@ Not every signal becomes an atom. The pipeline has four gates:
 | Enterprise demand aggregation | Monthly | Enterprise sales + content lead |
 | Lenny/podcast processing | Within 1 week of publication | Content team |
 | Event transcript processing | Within 1 week of event | Content team |
+| Course build working-session processing | Within 1 week of session | CPTO + content owner |
 | Cross-source trend analysis | Monthly | CPTO + content leads |
 | Full library freshness audit | Quarterly | CPTO |
 
@@ -351,6 +373,7 @@ This priority ranking reflects the principle from the AI Product Strategy course
 | Vibe Coding student feedback synthesis | `/AI Prototyping : Vibe Coding/Insights/AI Prototyping V3 Refinement.txt` | Extract feedback patterns into relevant atom annotations |
 | Carlos working session decisions | Multiple meeting notes across Vibe Coding and AI Product Strategy repos | Extract key content decisions into atom teaching notes |
 | Dana kickoff transcript | `/AI Prototyping : Vibe Coding/Insights/2025-02-09 Dana-Dejan Kickoff Meeting.md` | Extract content strategy insights |
+| Course API content needs sessions | Working sessions with content, enterprise, and platform stakeholders | Extract module contract rules, LMS output needs, and enterprise packaging constraints |
 
 ### Near-Term (Phase 3-4)
 

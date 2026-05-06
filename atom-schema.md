@@ -52,9 +52,11 @@ courses_referencing:                         # Auto-maintained; which courses us
   - course: "ai-product-strategy"
     modules: ["m4"]
     depth: "deep"                            # mention | moderate | deep
+    required: true                            # true if module cannot meet outcome without this atom
   - course: "ai-for-pms"
     modules: ["m4"]
     depth: "moderate"
+    required: false
 ---
 ```
 
@@ -67,6 +69,21 @@ related_atoms:                               # Cross-references to related atoms
   - "trust-gaps"
   - "golden-dataset"
   - "reliability-contract"
+module_dependencies:                         # Packaging guidance for course and enterprise use
+  requires_atoms:
+    - "golden-dataset"
+  should_travel_with_modules:
+    - course: "ai-product-strategy"
+      module: "m4"
+      reason: "Eval dashboard concepts need the reliability contract setup"
+  standalone: false
+  enterprise_repackaging_notes: "Remove AI Product Strategy course-arc references and restate the client-specific outcome."
+delivery_outputs:                            # Generated artifacts that consume this atom
+  - "slides"
+  - "speaker-notes"
+  - "student-notes"
+  - "lms-page"
+  - "enterprise-handout"
 deprecated: false                            # If true, atom is archived
 deprecation_reason: ""                       # Why it was deprecated
 contributed_by: "dejan-krstic"               # Who created/last updated
@@ -76,6 +93,55 @@ review_notes: ""                             # Notes from last verification revi
 ### Body Structure
 
 The body follows a consistent structure adapted per atom type.
+
+## Module Contract Layer
+
+Atoms define reusable knowledge. Module contracts define how that knowledge becomes a teachable package for live courses, on-demand learning, and enterprise programs. A module contract should live next to the course material and reference atoms by ID rather than duplicating canonical content.
+
+```yaml
+---
+id: "ai-product-strategy-m4"
+title: "The Contract"
+course: "ai-product-strategy"
+module_number: 4
+learning_outcome: "Define how an AI product earns trust through evals, reliability promises, and escalation paths."
+
+required_atoms:
+  - "confidence-ux"
+  - "golden-dataset"
+  - "reliability-contract"
+optional_atoms:
+  - "air-canada-chatbot"
+
+dependency_rules:
+  standalone: false
+  prerequisites:
+    - "ai-product-strategy-m1"
+  should_travel_with:
+    - module: "ai-product-strategy-m3"
+      reason: "Trust contract depends on understanding AI economics and cost trade-offs."
+
+source_inputs:
+  slides: "modules/m4/slides.md"
+  speaker_notes: "modules/m4/speaker-notes.md"
+  activity_instructions: "modules/m4/activity.md"
+  recordings:
+    - "2026-05-01-live-session"
+
+generated_outputs:
+  - "slides"
+  - "instructor-guide"
+  - "student-notes"
+  - "lms-page"
+  - "enterprise-package"
+
+enterprise_repackaging:
+  remove_references:
+    - "previous module"
+    - "living strategy builder"
+  rewrite_guidance: "Anchor the module in the client's target AI product outcome before introducing eval mechanics."
+---
+```
 
 #### For `concept` atoms:
 
